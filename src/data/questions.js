@@ -124,11 +124,21 @@ import img124 from '../assets/image copy 124.png'
 import img125 from '../assets/image copy 125.png'
 import img112 from '../assets/image copy 112.png'
 import img113 from '../assets/image copy 113.png'
+import img126 from '../assets/image copy 126.png'
+import img127 from '../assets/image copy 127.png'
+import img128 from '../assets/image copy 128.png'
+import img129 from '../assets/image copy 129.png'
+import img130 from '../assets/image copy 130.png'
+import img131 from '../assets/image copy 131.png'
+import img132 from '../assets/image copy 132.png'
+import img133 from '../assets/image copy 133.png'
+import img134 from '../assets/image copy 134.png'
+import img135 from '../assets/image copy 135.png'
 
 export const questions = [
   { id: 1, optionA: "Control weather with mind", optionAImage: img11, optionB: "Control animals", optionBImage: img10 },
   { id: 2, optionA: "Lose hearing for all life", optionAImage: img8, optionB: "Lose eyesight for all life", optionBImage: img9 },
-  { id: 3, optionA: "Be a musician", optionAImage: img4, optionB: "Be a singer", optionBImage: img5 },
+  { id: 3, optionA: "Be a Musician", optionAImage: img4, optionB: "Be a Singer", optionBImage: img5 },
   { id: 4, optionA: "Sky diving", optionAImage: imgBase, optionB: "Roller coaster", optionBImage: imgCopy },
   { id: 5, optionA: "Invisibility", optionAImage: img6, optionB: "Teleportation", optionBImage: img7 },
   { id: 6, optionA: "Dodge", optionAImage: img2, optionB: "Porsche", optionBImage: img3 },
@@ -189,4 +199,10 @@ export const questions = [
   { id: 61, optionA: "Have 1 pet Lion", optionAImage: img114, optionB: "Have 2 pet Wolves", optionBImage: img115 },
   { id: 62, optionA: "Disha Patani", optionAImage: img124, optionB: "Tamannaah Bhatia", optionBImage: img125 },
   { id: 63, optionA: "Have a peaceful nature view", optionAImage: img112, optionB: "Have a modern city skyline view", optionBImage: img113 },
+  { id: 64, optionA: "Gigi Hadid", optionAImage: img126, optionB: "Gal Gadot", optionBImage: img127 },
+  { id: 65, optionA: "Have the Omnitrix like Ben 10", optionAImage: img128, optionB: "Have your own Pokemon Team", optionBImage: img129 },
+  { id: 66, optionA: "Jennifer Connelly", optionAImage: img130, optionB: "Jessica Alba", optionBImage: img131 },
+  { id: 67, optionA: "Be a Professional Footballer", optionAImage: img132, optionB: "Be a World-Famous Actor", optionBImage: img133 },
+  { id: 68, optionA: "Wield a Lightsaber like in Star Wars", optionAImage: img134, optionB: "Use a Powerful Bow and Arrow", optionBImage: img135 },
+
 ];

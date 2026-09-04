@@ -1,33 +1,119 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { questions } from '../data/questions'
 
+// ── Fisher-Yates shuffle ──
+function shuffleArray(arr) {
+  const copy = [...arr]
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[copy[i], copy[j]] = [copy[j], copy[i]]
+  }
+  return copy
+}
+
+// ── Confetti burst — pure JS DOM particles, no libraries ──
+const CONFETTI_COLORS = [
+  '#22d3ee', '#f472b6', '#a78bfa', '#34d399',
+  '#fbbf24', '#60a5fa', '#f87171', '#4ade80',
+]
+function launchConfetti(count = 90) {
+  for (let i = 0; i < count; i++) {
+    const el = document.createElement('div')
+    el.className = 'confetti-particle'
+    const size = 7 + Math.random() * 9
+    const isCircle = Math.random() > 0.5
+    el.style.cssText = [
+      `width:${size}px`,
+      `height:${isCircle ? size : size * 2.2}px`,
+      `left:${5 + Math.random() * 90}vw`,
+      `background:${CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)]}`,
+      `animation-duration:${1.6 + Math.random() * 2.2}s`,
+      `animation-delay:${Math.random() * 0.9}s`,
+      `border-radius:${isCircle ? '50%' : '3px'}`,
+      'opacity:1',
+    ].join(';')
+    document.body.appendChild(el)
+    const totalMs =
+      (parseFloat(el.style.animationDuration) +
+        parseFloat(el.style.animationDelay)) * 1000
+    setTimeout(() => el.remove(), totalMs + 200)
+  }
+}
+
+// ── Format elapsed seconds → "Xm Ys" or "Xs" ──
+function formatTime(secs) {
+  if (secs < 60) return `${secs}s`
+  return `${Math.floor(secs / 60)}m ${secs % 60}s`
+}
+
 export default function ComparisonScreen() {
+  // ── Core game state ──
+  const [shuffledQuestions, setShuffledQuestions] = useState(() => shuffleArray(questions))
   const [currentIndex, setCurrentIndex] = useState(0)
   const [selectedOption, setSelectedOption] = useState(null)
   const [isTransitioning, setIsTransitioning] = useState(false)
 
-  const isCompleted = currentIndex >= questions.length
-  const currentQuestion = questions[currentIndex]
+  // ── Time tracking refs (don't cause re-renders) ──
+  const startTimeRef = useRef(Date.now())
+  const pickTimesRef = useRef([])
+
+  // ── End screen state ──
+  const [elapsedSecs, setElapsedSecs] = useState(0)
+  const [fastestIdx, setFastestIdx] = useState(null)
+  const [shareLabel, setShareLabel] = useState('Share Results')
+  const confettiFiredRef = useRef(false)
+
+  const isCompleted = currentIndex >= shuffledQuestions.length
+  const currentQuestion = shuffledQuestions[currentIndex]
+
+  // ── Fire confetti + compute stats exactly once on completion ──
+  useEffect(() => {
+    if (isCompleted && !confettiFiredRef.current) {
+      confettiFiredRef.current = true
+      launchConfetti(90)
+      const secs = Math.round((Date.now() - startTimeRef.current) / 1000)
+      setElapsedSecs(secs)
+      const picks = pickTimesRef.current
+      if (picks.length >= 2) {
+        let minGap = Infinity, minIdx = 0
+        for (let i = 1; i < picks.length; i++) {
+          const gap = picks[i] - picks[i - 1]
+          if (gap < minGap) { minGap = gap; minIdx = i }
+        }
+        setFastestIdx(minIdx)
+      }
+    }
+  }, [isCompleted])
 
   const handleSelectOption = (optionKey, optionText) => {
     if (isTransitioning) return
-
+    pickTimesRef.current.push(Date.now())
     setSelectedOption(optionKey)
     setIsTransitioning(true)
-
     console.log(`Question ID: ${currentQuestion.id} | Selected: ${optionKey} ("${optionText}")`)
-
     setTimeout(() => {
-      setCurrentIndex((prevIndex) => prevIndex + 1)
+      setCurrentIndex((prev) => prev + 1)
       setSelectedOption(null)
       setIsTransitioning(false)
     }, 320)
   }
 
   const handleRestart = () => {
+    setShuffledQuestions(shuffleArray(questions))
     setCurrentIndex(0)
     setSelectedOption(null)
     setIsTransitioning(false)
+    startTimeRef.current = Date.now()
+    pickTimesRef.current = []
+    confettiFiredRef.current = false
+    setShareLabel('Share Results')
+  }
+
+  const handleShare = () => {
+    const text = `I just finished SwipeGame — all ${questions.length} choices in ${formatTime(elapsedSecs)}! 🎮 Can you beat my time?`
+    navigator.clipboard.writeText(text)
+      .then(() => { setShareLabel('Copied! ✓'); setTimeout(() => setShareLabel('Share Results'), 2500) })
+      .catch(() => { setShareLabel('Copy failed'); setTimeout(() => setShareLabel('Share Results'), 2000) })
   }
 
   return (
@@ -62,37 +148,65 @@ export default function ComparisonScreen() {
         </header>
 
         {isCompleted ? (
-          /* Game Completed State */
-          <div className="w-full max-w-lg bg-[#111320]/90 backdrop-blur-2xl border border-white/15 rounded-3xl p-8 sm:p-12 text-center shadow-[0_20px_60px_rgba(0,0,0,0.8)] animate-fade-in">
-            <div className="w-20 h-20 bg-gradient-to-tr from-cyan-500/20 to-teal-500/20 text-cyan-300 rounded-2xl flex items-center justify-center mx-auto mb-6 ring-1 ring-cyan-400/30 shadow-[0_0_30px_rgba(6,182,212,0.3)]">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-10 h-10"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2.5}
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-              </svg>
+          /* ════════════ GAME COMPLETED STATE ════════════ */
+          <div
+            className="w-full max-w-lg text-center"
+            style={{ animation: 'fade-slide-up 0.55s ease both' }}
+          >
+            <div className="bg-white/5 backdrop-blur-2xl border border-white/15 rounded-3xl p-8 sm:p-12 shadow-[0_24px_70px_rgba(0,0,0,0.75)] ring-1 ring-white/5">
+
+              {/* Animated checkmark — pop-in + continuous glow pulse */}
+              <div className="icon-pop glow-pulse w-24 h-24 rounded-2xl mx-auto mb-7 flex items-center justify-center bg-gradient-to-tr from-cyan-500/25 to-pink-500/25 border border-white/20 text-cyan-300">
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+
+              {/* Gradient title matching SwipeGame header */}
+              <h2 className="font-['Outfit',sans-serif] text-4xl sm:text-5xl font-black tracking-tight leading-none bg-gradient-to-r from-cyan-400 via-teal-300 to-pink-500 bg-clip-text text-transparent mb-3">
+                You're all done!
+              </h2>
+              <p className="text-slate-300/80 text-sm sm:text-base mb-8">
+                You powered through all <span className="text-pink-400 font-bold">{questions.length}</span> comparisons. Impressive!
+              </p>
+
+              {/* Stats row */}
+              <div className="grid grid-cols-2 gap-3 mb-9">
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-md">
+                  <p className="text-xs font-semibold tracking-widest uppercase text-cyan-300/80 mb-1">Total time</p>
+                  <p className="font-['Outfit',sans-serif] text-2xl font-black text-white">{formatTime(elapsedSecs)}</p>
+                </div>
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-md">
+                  <p className="text-xs font-semibold tracking-widest uppercase text-pink-300/80 mb-1">Fastest pick</p>
+                  <p className="font-['Outfit',sans-serif] text-2xl font-black text-white">{fastestIdx !== null ? `Q${fastestIdx + 1}` : '—'}</p>
+                </div>
+              </div>
+
+              {/* Action buttons */}
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                {/* Play Again */}
+                <button
+                  onClick={handleRestart}
+                  className="group font-['Outfit',sans-serif] inline-flex items-center justify-center gap-2 px-8 py-3.5 text-base font-bold text-white rounded-2xl cursor-pointer bg-gradient-to-r from-cyan-500 via-teal-500 to-pink-500 border border-white/20 shadow-[0_6px_25px_rgba(6,182,212,0.4)] hover:shadow-[0_10px_40px_rgba(236,72,153,0.65)] hover:scale-[1.06] hover:brightness-110 active:scale-95 transition-all duration-200"
+                >
+                  <span>Play Again</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 transition-transform duration-300 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                </button>
+
+                {/* Share Results */}
+                <button
+                  onClick={handleShare}
+                  className="group font-['Outfit',sans-serif] inline-flex items-center justify-center gap-2 px-8 py-3.5 text-base font-bold rounded-2xl cursor-pointer bg-white/8 backdrop-blur-md border border-white/20 text-slate-200 hover:bg-white/15 hover:border-white/35 hover:text-white hover:shadow-[0_8px_30px_rgba(255,255,255,0.12)] hover:scale-[1.04] active:scale-95 transition-all duration-200"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                  </svg>
+                  <span>{shareLabel}</span>
+                </button>
+              </div>
             </div>
-
-            <h2 className="font-['Outfit',sans-serif] text-2xl sm:text-3xl font-extrabold text-white mb-2 tracking-tight">
-              You're all done!
-            </h2>
-            <p className="text-slate-300/80 text-sm sm:text-base mb-8">
-              You evaluated all <span className="text-pink-400 font-bold">{questions.length}</span> comparisons.
-            </p>
-
-            <button
-              onClick={handleRestart}
-              className="group font-['Outfit',sans-serif] inline-flex items-center justify-center gap-2 px-8 py-3.5 text-base font-bold text-white bg-gradient-to-r from-cyan-500 via-teal-500 to-pink-500 rounded-2xl shadow-[0_6px_25px_rgba(6,182,212,0.4)] hover:shadow-[0_8px_35px_rgba(236,72,153,0.6)] hover:scale-105 hover:brightness-110 active:scale-95 transition-all duration-200 cursor-pointer border border-white/20"
-            >
-              <span>Play Again</span>
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 transition-transform duration-300 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-            </button>
           </div>
         ) : (
           /* Active Comparison Screen */
@@ -142,7 +256,15 @@ export default function ComparisonScreen() {
                 </div>
                 {/* Card Bottom Label */}
                 <div className="p-5 sm:p-7 flex-1 flex items-center justify-center bg-gradient-to-b from-transparent to-[#0a0b12]/50">
-                  <p className="font-['Outfit',sans-serif] text-base sm:text-lg md:text-xl font-bold text-white text-center leading-snug group-hover:text-cyan-200 transition-colors">
+                  <p
+                    key={currentIndex}
+                    className="card-label font-['Outfit',sans-serif] text-lg sm:text-xl md:text-2xl font-bold text-center leading-relaxed tracking-wide group-hover:text-cyan-200 transition-colors"
+                    style={{
+                      color: 'white',
+                      textShadow: '0 0 18px rgba(6,182,212,0.55), 0 2px 8px rgba(0,0,0,0.7)',
+                      animationDelay: '80ms',
+                    }}
+                  >
                     {currentQuestion.optionA}
                   </p>
                 </div>
@@ -190,7 +312,15 @@ export default function ComparisonScreen() {
                 </div>
                 {/* Card Bottom Label */}
                 <div className="p-5 sm:p-7 flex-1 flex items-center justify-center bg-gradient-to-b from-transparent to-[#0a0b12]/50">
-                  <p className="font-['Outfit',sans-serif] text-base sm:text-lg md:text-xl font-bold text-white text-center leading-snug group-hover:text-pink-200 transition-colors">
+                  <p
+                    key={currentIndex}
+                    className="card-label font-['Outfit',sans-serif] text-lg sm:text-xl md:text-2xl font-bold text-center leading-relaxed tracking-wide group-hover:text-pink-200 transition-colors"
+                    style={{
+                      color: 'white',
+                      textShadow: '0 0 18px rgba(236,72,153,0.55), 0 2px 8px rgba(0,0,0,0.7)',
+                      animationDelay: '80ms',
+                    }}
+                  >
                     {currentQuestion.optionB}
                   </p>
                 </div>
