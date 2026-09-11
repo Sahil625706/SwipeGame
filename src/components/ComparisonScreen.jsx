@@ -98,6 +98,16 @@ export default function ComparisonScreen() {
     }, 320)
   }
 
+  const handleBack = () => {
+    if (currentIndex <= 0 || isTransitioning) return
+    if (pickTimesRef.current.length > 0) {
+      pickTimesRef.current.pop()
+    }
+    setSelectedOption(null)
+    setIsTransitioning(false)
+    setCurrentIndex((prev) => prev - 1)
+  }
+
   const handleRestart = () => {
     setShuffledQuestions(shuffleArray(questions))
     setCurrentIndex(0)
@@ -211,14 +221,34 @@ export default function ComparisonScreen() {
         ) : (
           /* Active Comparison Screen */
           <div className="w-full flex flex-col items-center">
-            {/* Progress indicator */}
-            <div className="w-full max-w-md mb-6 sm:mb-8 flex flex-col items-center px-2">
-              <div className="flex justify-between w-full text-xs font-semibold tracking-wider text-slate-300 mb-2.5">
+            {/* Top Bar with Back Button and Progress indicator */}
+            <div className="w-full max-w-xl mb-6 sm:mb-8 flex flex-col px-2">
+              <div className="flex items-center justify-between w-full text-xs font-semibold tracking-wider text-slate-300 mb-2.5 min-h-[32px]">
+                {/* Back Button (hidden on first question) */}
+                {currentIndex > 0 ? (
+                  <button
+                    type="button"
+                    onClick={handleBack}
+                    disabled={isTransitioning}
+                    className="group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/80 hover:bg-slate-800/90 text-slate-300 hover:text-white border border-white/15 hover:border-cyan-400/50 backdrop-blur-md text-xs font-bold tracking-wide shadow-md hover:shadow-[0_0_15px_rgba(6,182,212,0.35)] hover:-translate-x-0.5 active:scale-95 transition-all duration-200 cursor-pointer"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 transition-transform duration-200 group-hover:-translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    <span>Back</span>
+                  </button>
+                ) : (
+                  <div className="w-16" />
+                )}
+
+                {/* Center Question Counter */}
                 <span className="flex items-center gap-1.5 text-cyan-200">
                   <span className="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
                   Question <span className="text-white font-bold">{currentIndex + 1}</span> of {questions.length}
                 </span>
-                <span className="text-pink-400 font-bold tracking-normal">
+
+                {/* Percentage */}
+                <span className="text-pink-400 font-bold tracking-normal text-right w-16">
                   {Math.round(((currentIndex + 1) / questions.length) * 100)}%
                 </span>
               </div>
@@ -245,14 +275,30 @@ export default function ComparisonScreen() {
                     : 'bg-[#121422]/85 border border-white/10 shadow-[0_12px_36px_rgba(0,0,0,0.5)] hover:-translate-y-2 hover:scale-[1.01] hover:border-cyan-400/70 hover:shadow-[0_20px_50px_rgba(6,182,212,0.35)] hover:bg-[#16192c]/90 active:scale-95'
                 }`}
               >
-                {/* Card Top Image Container */}
+                {/* Card Top Media Container */}
                 <div className="relative w-full aspect-[4/3] overflow-hidden bg-[#0a0b12]/90 backdrop-blur-sm flex items-center justify-center p-3 border-b border-white/10">
-                  <img
-                    src={currentQuestion.optionAImage}
-                    alt={currentQuestion.optionA}
-                    className="w-full h-full object-contain drop-shadow-[0_8px_20px_rgba(0,0,0,0.5)] transition-transform duration-500 group-hover:scale-105"
-                    loading="lazy"
-                  />
+                  {currentQuestion.optionAType === 'video' ? (
+                    <video
+                      key={currentQuestion.optionAImage}
+                      src={currentQuestion.optionAImage}
+                      autoPlay
+                      muted
+                      playsInline
+                      controls
+                      disablePictureInPicture
+                      disableRemotePlayback
+                      controlsList="nofullscreen noremoteplayback"
+                      onClick={(e) => e.stopPropagation()}
+                      className="w-full h-full object-contain bg-black rounded-2xl drop-shadow-[0_8px_20px_rgba(0,0,0,0.5)]"
+                    />
+                  ) : (
+                    <img
+                      src={currentQuestion.optionAImage}
+                      alt={currentQuestion.optionA}
+                      className="w-full h-full object-contain drop-shadow-[0_8px_20px_rgba(0,0,0,0.5)] transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                  )}
                 </div>
                 {/* Card Bottom Label */}
                 <div className="p-5 sm:p-7 flex-1 flex items-center justify-center bg-gradient-to-b from-transparent to-[#0a0b12]/50">
@@ -301,14 +347,30 @@ export default function ComparisonScreen() {
                     : 'bg-[#121422]/85 border border-white/10 shadow-[0_12px_36px_rgba(0,0,0,0.5)] hover:-translate-y-2 hover:scale-[1.01] hover:border-pink-400/70 hover:shadow-[0_20px_50px_rgba(244,63,94,0.35)] hover:bg-[#16192c]/90 active:scale-95'
                 }`}
               >
-                {/* Card Top Image Container */}
+                {/* Card Top Media Container */}
                 <div className="relative w-full aspect-[4/3] overflow-hidden bg-[#0a0b12]/90 backdrop-blur-sm flex items-center justify-center p-3 border-b border-white/10">
-                  <img
-                    src={currentQuestion.optionBImage}
-                    alt={currentQuestion.optionB}
-                    className="w-full h-full object-contain drop-shadow-[0_8px_20px_rgba(0,0,0,0.5)] transition-transform duration-500 group-hover:scale-105"
-                    loading="lazy"
-                  />
+                  {currentQuestion.optionBType === 'video' ? (
+                    <video
+                      key={currentQuestion.optionBImage}
+                      src={currentQuestion.optionBImage}
+                      autoPlay
+                      muted
+                      playsInline
+                      controls
+                      disablePictureInPicture
+                      disableRemotePlayback
+                      controlsList="nofullscreen noremoteplayback"
+                      onClick={(e) => e.stopPropagation()}
+                      className="w-full h-full object-contain bg-black rounded-2xl drop-shadow-[0_8px_20px_rgba(0,0,0,0.5)]"
+                    />
+                  ) : (
+                    <img
+                      src={currentQuestion.optionBImage}
+                      alt={currentQuestion.optionB}
+                      className="w-full h-full object-contain drop-shadow-[0_8px_20px_rgba(0,0,0,0.5)] transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                  )}
                 </div>
                 {/* Card Bottom Label */}
                 <div className="p-5 sm:p-7 flex-1 flex items-center justify-center bg-gradient-to-b from-transparent to-[#0a0b12]/50">

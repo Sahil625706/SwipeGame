@@ -49,3 +49,23 @@
   animation: text-slide-up 0.38s cubic-bezier(0.22,1,0.36,1) both;
   text-wrap: balance;
 }
+
+/* ── Hide picture-in-picture & fullscreen controls only ── */
+video::-webkit-media-controls-picture-in-picture-button {
+  display: none !important;
+  -webkit-appearance: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+video::-webkit-media-controls-fullscreen-button {
+  display: none !important;
+  -webkit-appearance: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+video::-internal-media-controls-overflow-button,
+video::-webkit-media-controls-overflow-button {
+  display: none !important;
+}
