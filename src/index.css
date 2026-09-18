@@ -69,3 +69,21 @@ video::-internal-media-controls-overflow-button,
 video::-webkit-media-controls-overflow-button {
   display: none !important;
 }
+
+/* ── Category card shimmer sweep ── */
+@keyframes shimmer-sweep {
+  0% {
+    transform: translateX(-150%) skewX(-20deg);
+  }
+  100% {
+    transform: translateX(250%) skewX(-20deg);
+  }
+}
+
+.card-shimmer {
+  transform: translateX(-150%) skewX(-20deg);
+}
+
+.group:hover .card-shimmer {
+  animation: shimmer-sweep 1.1s cubic-bezier(0.4, 0, 0.2, 1);
+}
