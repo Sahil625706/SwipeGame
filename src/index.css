@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+@theme {
+  --font-baloo: 'Baloo 2', cursive, sans-serif;
+  --font-jakarta: 'Plus Jakarta Sans', sans-serif;
+}
+
+.font-baloo {
+  font-family: 'Baloo 2', cursive, sans-serif;
+}
+
 @layer base {
   * {
     box-sizing: border-box;

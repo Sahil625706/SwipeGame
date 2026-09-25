@@ -327,7 +327,7 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
             </span>
           </div>
 
-          <h1 className="font-['Outfit',sans-serif] text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-none bg-gradient-to-r from-cyan-400 via-teal-300 to-pink-500 bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(6,182,212,0.3)]">
+          <h1 className="font-baloo font-['Baloo_2',sans-serif] text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-none bg-gradient-to-r from-cyan-400 via-teal-300 to-pink-500 bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(6,182,212,0.3)]">
             SwipeGame
           </h1>
           <p className="mt-2 text-sm sm:text-base text-slate-300/90 font-medium tracking-wide max-w-md">
@@ -356,7 +356,7 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
                     Ultimate Champion
                   </div>
 
-                  <h2 className="font-['Outfit',sans-serif] text-3xl sm:text-4xl font-black tracking-tight leading-tight text-white mb-5">
+                  <h2 className="font-baloo font-['Baloo_2',sans-serif] text-3xl sm:text-4xl font-extrabold tracking-tight leading-tight text-white mb-5">
                     {champion.name}
                   </h2>
 
@@ -382,7 +382,7 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
                     </svg>
                   </div>
 
-                  <h2 className="font-['Outfit',sans-serif] text-4xl sm:text-5xl font-black tracking-tight leading-none bg-gradient-to-r from-cyan-400 via-teal-300 to-pink-500 bg-clip-text text-transparent mb-3">
+                  <h2 className="font-baloo font-['Baloo_2',sans-serif] text-4xl sm:text-5xl font-extrabold tracking-tight leading-none bg-gradient-to-r from-cyan-400 via-teal-300 to-pink-500 bg-clip-text text-transparent mb-3">
                     You're all done!
                   </h2>
                   <p className="text-slate-300/80 text-sm sm:text-base mb-6">
@@ -395,13 +395,13 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
               <div className="grid grid-cols-2 gap-3 mb-8">
                 <div className="bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-md">
                   <p className="text-xs font-semibold tracking-widest uppercase text-cyan-300/80 mb-1">Total time</p>
-                  <p className="font-['Outfit',sans-serif] text-2xl font-black text-white">{formatTime(elapsedSecs)}</p>
+                  <p className="text-2xl font-extrabold text-white">{formatTime(elapsedSecs)}</p>
                 </div>
                 <div className="bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-md">
                   <p className="text-xs font-semibold tracking-widest uppercase text-pink-300/80 mb-1">
                     {isSurvivor ? 'Contenders' : 'Fastest pick'}
                   </p>
-                  <p className="font-['Outfit',sans-serif] text-2xl font-black text-white">
+                  <p className="text-2xl font-extrabold text-white">
                     {isSurvivor ? survivorPool.length : (fastestIdx !== null ? `Q${fastestIdx + 1}` : '—')}
                   </p>
                 </div>
@@ -412,7 +412,7 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
                 {/* Play Again */}
                 <button
                   onClick={handleRestart}
-                  className="group font-['Outfit',sans-serif] inline-flex items-center justify-center gap-2 px-6 py-3 text-base font-bold text-white rounded-2xl cursor-pointer bg-gradient-to-r from-cyan-500 via-teal-500 to-pink-500 border border-white/20 shadow-[0_6px_25px_rgba(6,182,212,0.4)] hover:shadow-[0_10px_40px_rgba(236,72,153,0.65)] hover:scale-[1.05] hover:brightness-110 active:scale-95 transition-all duration-200"
+                  className="group inline-flex items-center justify-center gap-2 px-6 py-3 text-base font-bold text-white rounded-2xl cursor-pointer bg-gradient-to-r from-cyan-500 via-teal-500 to-pink-500 border border-white/20 shadow-[0_6px_25px_rgba(6,182,212,0.4)] hover:shadow-[0_10px_40px_rgba(236,72,153,0.65)] hover:scale-[1.05] hover:brightness-110 active:scale-95 transition-all duration-200"
                 >
                   <span>Play Again</span>
                   <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 transition-transform duration-300 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -424,7 +424,7 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
                 {onBackToCategories && (
                   <button
                     onClick={onBackToCategories}
-                    className="group font-['Outfit',sans-serif] inline-flex items-center justify-center gap-2 px-6 py-3 text-base font-bold rounded-2xl cursor-pointer bg-white/8 backdrop-blur-md border border-white/20 text-slate-200 hover:bg-white/15 hover:border-cyan-400/40 hover:text-white hover:shadow-[0_8px_30px_rgba(6,182,212,0.2)] hover:scale-[1.03] active:scale-95 transition-all duration-200"
+                    className="group inline-flex items-center justify-center gap-2 px-6 py-3 text-base font-bold rounded-2xl cursor-pointer bg-white/8 backdrop-blur-md border border-white/20 text-slate-200 hover:bg-white/15 hover:border-cyan-400/40 hover:text-white hover:shadow-[0_8px_30px_rgba(6,182,212,0.2)] hover:scale-[1.03] active:scale-95 transition-all duration-200"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -436,7 +436,7 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
                 {/* Share */}
                 <button
                   onClick={handleShare}
-                  className="group font-['Outfit',sans-serif] inline-flex items-center justify-center gap-2 px-6 py-3 text-base font-bold rounded-2xl cursor-pointer bg-white/8 backdrop-blur-md border border-white/20 text-slate-200 hover:bg-white/15 hover:border-white/35 hover:text-white hover:shadow-[0_8px_30px_rgba(255,255,255,0.12)] hover:scale-[1.03] active:scale-95 transition-all duration-200"
+                  className="group inline-flex items-center justify-center gap-2 px-6 py-3 text-base font-bold rounded-2xl cursor-pointer bg-white/8 backdrop-blur-md border border-white/20 text-slate-200 hover:bg-white/15 hover:border-white/35 hover:text-white hover:shadow-[0_8px_30px_rgba(255,255,255,0.12)] hover:scale-[1.03] active:scale-95 transition-all duration-200"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
@@ -581,7 +581,7 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
                     <div className="p-5 sm:p-7 flex-1 flex items-center justify-center bg-gradient-to-b from-transparent to-[#0a0b12]/50">
                       <p
                         key={label}
-                        className="card-label font-['Outfit',sans-serif] text-lg sm:text-xl md:text-2xl font-bold text-center leading-relaxed tracking-wide group-hover:text-cyan-200 transition-colors"
+                        className="card-label font-baloo font-['Baloo_2',sans-serif] text-lg sm:text-xl md:text-2xl font-bold text-center leading-snug tracking-normal group-hover:text-cyan-200 transition-colors"
                         style={{
                           color: 'white',
                           textShadow: '0 0 18px rgba(6,182,212,0.55), 0 2px 8px rgba(0,0,0,0.7)',
@@ -598,7 +598,7 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
               {/* Floating VS Badge (Desktop Center) */}
               <div className="hidden md:flex absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none items-center justify-center">
                 <div className="w-13 h-13 rounded-full bg-[#121422]/95 backdrop-blur-xl border border-white/20 shadow-[0_0_25px_rgba(6,182,212,0.4)] flex items-center justify-center ring-4 ring-slate-900">
-                  <span className="font-['Outfit',sans-serif] text-xs font-black tracking-widest bg-gradient-to-br from-cyan-300 via-teal-200 to-pink-400 bg-clip-text text-transparent">
+                  <span className="text-xs font-black tracking-widest bg-gradient-to-br from-cyan-300 via-teal-200 to-pink-400 bg-clip-text text-transparent">
                     VS
                   </span>
                 </div>
@@ -607,7 +607,7 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
               {/* Mobile VS Badge (In-between divider) */}
               <div className="flex md:hidden items-center justify-center -my-2.5 z-20 pointer-events-none">
                 <div className="w-10 h-10 rounded-full bg-[#121422]/95 backdrop-blur-xl border border-white/20 shadow-[0_0_20px_rgba(6,182,212,0.3)] flex items-center justify-center ring-2 ring-slate-900">
-                  <span className="font-['Outfit',sans-serif] text-[10px] font-black tracking-widest bg-gradient-to-br from-cyan-300 via-teal-200 to-pink-400 bg-clip-text text-transparent">
+                  <span className="text-[10px] font-black tracking-widest bg-gradient-to-br from-cyan-300 via-teal-200 to-pink-400 bg-clip-text text-transparent">
                     VS
                   </span>
                 </div>
@@ -675,7 +675,7 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
                     <div className="p-5 sm:p-7 flex-1 flex items-center justify-center bg-gradient-to-b from-transparent to-[#0a0b12]/50">
                       <p
                         key={label}
-                        className="card-label font-['Outfit',sans-serif] text-lg sm:text-xl md:text-2xl font-bold text-center leading-relaxed tracking-wide group-hover:text-pink-200 transition-colors"
+                        className="card-label font-baloo font-['Baloo_2',sans-serif] text-lg sm:text-xl md:text-2xl font-bold text-center leading-snug tracking-normal group-hover:text-pink-200 transition-colors"
                         style={{
                           color: 'white',
                           textShadow: '0 0 18px rgba(236,72,153,0.55), 0 2px 8px rgba(0,0,0,0.7)',

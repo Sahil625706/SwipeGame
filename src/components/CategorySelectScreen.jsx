@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { questions } from '../data/questions'
 import { actressAllQuestions } from '../data/actressAllQuestions'
 import { actressHollywoodQuestions } from '../data/actressHollywoodQuestions'
@@ -220,7 +220,7 @@ function CategoryCard({ cat, onClick }) {
         </div>
 
         <h2
-          className="font-['Outfit',sans-serif] text-2xl sm:text-3xl font-black text-white group-hover:text-cyan-200 transition-colors mb-2"
+          className="font-baloo font-['Baloo_2',sans-serif] text-2xl sm:text-3xl font-bold text-white group-hover:text-cyan-200 transition-colors mb-2 tracking-normal leading-snug"
           style={{ textShadow: '0 2px 12px rgba(0,0,0,0.9)' }}
         >
           {cat.title}
@@ -302,7 +302,7 @@ export default function CategorySelectScreen({ onSelectCategory }) {
               </span>
             </div>
 
-            <h1 className="font-['Outfit',sans-serif] text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-none bg-gradient-to-r from-pink-400 via-rose-300 to-fuchsia-400 bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(244,63,94,0.3)]">
+            <h1 className="font-baloo font-['Baloo_2',sans-serif] text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-none bg-gradient-to-r from-pink-400 via-rose-300 to-fuchsia-400 bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(244,63,94,0.3)]">
               Choose Your Category
             </h1>
             <p className="mt-3 text-sm sm:text-base text-slate-300/90 font-medium tracking-wide max-w-md">
@@ -323,32 +323,42 @@ export default function CategorySelectScreen({ onSelectCategory }) {
 
   // ── Main category selection screen ─────────────────────────────────────────
   return (
-    <div className="relative min-h-screen text-slate-100 flex flex-col items-center justify-center px-4 py-8 sm:py-12 overflow-x-hidden selection:bg-pink-500 selection:text-white">
+    <div className="relative min-h-screen text-slate-100 flex flex-col items-center justify-center overflow-x-hidden selection:bg-pink-500 selection:text-white">
       <ScreenBackground />
 
-      <div className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center">
-        {/* Header */}
-        <header className="text-center mb-8 sm:mb-12 flex flex-col items-center">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-slate-900/80 backdrop-blur-md border border-white/10 mb-3 shadow-lg">
-            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
-            <span className="text-[11px] font-semibold tracking-widest uppercase text-cyan-200">
-              Interactive Choice Game
-            </span>
+      <div
+        className="w-full flex flex-col items-center justify-center px-4 py-8 sm:py-12 my-auto"
+        style={{
+          width: '111.111111%',
+          maxWidth: '111.111111%',
+          transform: 'scale(0.9)',
+          transformOrigin: 'top center',
+        }}
+      >
+        <div className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center">
+          {/* Header */}
+          <header className="text-center mb-8 sm:mb-12 flex flex-col items-center">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-slate-900/80 backdrop-blur-md border border-white/10 mb-3 shadow-lg">
+              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+              <span className="text-[11px] font-semibold tracking-widest uppercase text-cyan-200">
+                Interactive Choice Game
+              </span>
+            </div>
+
+            <h1 className="font-baloo font-['Baloo_2',sans-serif] text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-none bg-gradient-to-r from-cyan-400 via-teal-300 to-pink-500 bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(6,182,212,0.3)]">
+              Choose Your Mode
+            </h1>
+            <p className="mt-3 text-sm sm:text-base text-slate-300/90 font-medium tracking-wide max-w-md">
+              Pick a category to begin your ultimate comparison showdown!
+            </p>
+          </header>
+
+          {/* 2x2 Category Grid */}
+          <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+            {CATEGORIES.map((cat) => (
+              <CategoryCard key={cat.id} cat={cat} onClick={handleCategoryClick} />
+            ))}
           </div>
-
-          <h1 className="font-['Outfit',sans-serif] text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-none bg-gradient-to-r from-cyan-400 via-teal-300 to-pink-500 bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(6,182,212,0.3)]">
-            Choose Your Mode
-          </h1>
-          <p className="mt-3 text-sm sm:text-base text-slate-300/90 font-medium tracking-wide max-w-md">
-            Pick a category to begin your ultimate comparison showdown!
-          </p>
-        </header>
-
-        {/* 2x2 Category Grid */}
-        <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
-          {CATEGORIES.map((cat) => (
-            <CategoryCard key={cat.id} cat={cat} onClick={handleCategoryClick} />
-          ))}
         </div>
       </div>
     </div>
