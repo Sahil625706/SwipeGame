@@ -40,48 +40,84 @@ import img325 from "../assets/image copy 325.png"
 import img326 from "../assets/image copy 326.png"
 import img327 from "../assets/image copy 327.png"
 import img328 from "../assets/image copy 328.png"
+import img369 from "../assets/image copy 369.png"
+import img370 from "../assets/image copy 370.png"
+import img371 from "../assets/image copy 371.png"
+import img372 from "../assets/image copy 372.png"
+import img373 from "../assets/image copy 373.png"
+import img374 from "../assets/image copy 374.png"
+import img375 from "../assets/image copy 375.png"
+import img376 from "../assets/image copy 376.png"
+import img377 from "../assets/image copy 377.png"
+import img378 from "../assets/image copy 378.png"
+import img379 from "../assets/image copy 379.png"
+import img380 from "../assets/image copy 380.png"
+import img381 from "../assets/image copy 381.png"
+import img382 from "../assets/image copy 382.png"
+import img394 from "../assets/image copy 394.png"
+import img395 from "../assets/image copy 395.png"
+import img396 from "../assets/image copy 396.png"
+import img397 from "../assets/image copy 397.png"
 
 export const actressAllQuestions = [
-  { id: 1, name: "Elizabeth Olsen", image: img287 },
+  { id: 43, name: "anne de paulas", image: img369 },
   { id: 2, name: "Ananya Pandey", image: img288 },
   { id: 3, name: "Priyanka Chopra", image: img289 },
-  { id: 4, name: "Dakota Johnson", image: img290 },
   { id: 5, name: "Tripti Dimri", image: img291 },
   { id: 6, name: "Alia Bhatt", image: img292 },
+  { id: 44, name: "Hande Ercel", image: img370 },
+  { id: 45, name: "Cindy Crawford", image: img371 },
   { id: 7, name: "Sharvari Wagh", image: img293 },
   { id: 8, name: "Margot Robbie", image: img294 },
   { id: 9, name: "Dua Lipa", image: img295 },
   { id: 10, name: "Riya Sen", image: img296 },
   { id: 11, name: "Jennifer Lawrence", image: img297 },
+  { id: 57, name: "Gisele Bündchen", image: img394 },
   { id: 12, name: "Alexandra Daddario", image: img298 },
   { id: 13, name: "Wamiqa Gabbi", image: img299 },
   { id: 14, name: "Tara Sutaria", image: img300 },
   { id: 15, name: "Courteney Cox", image: img301 },
   { id: 16, name: "Kriti Sanon", image: img302 },
+  { id: 1, name: "Elizabeth Olsen", image: img287 },
   { id: 17, name: "Katrina Kaif", image: img303 },
   { id: 18, name: "Jennifer Connelly", image: img304 },
   { id: 19, name: "Scarlett Johansson", image: img305 },
   { id: 20, name: "Jacqueline Fernandez", image: img306 },
   { id: 21, name: "Anne Hathaway", image: img307 },
+  { id: 46, name: "Yulia Snigir", image: img372 },
   { id: 22, name: "Esha Gupta", image: img308 },
   { id: 23, name: "Aishwarya Rai", image: img309 },
   { id: 24, name: "Kylie Jenner", image: img310 },
+  { id: 47, name: "barbara pelvin", image: img373 },
   { id: 25, name: "Jahnvi Kapoor", image: img311 },
+  { id: 48, name: "Megan William", image: img374 },
+  { id: 4, name: "Dakota Johnson", image: img290 },
   { id: 26, name: "Jessica Alba", image: img312 },
   { id: 27, name: "Sonal Chauhan", image: img313 },
+  { id: 49, name: "Rosie Huntington-Whiteley", image: img375 },
+  { id: 60, name: "Alice Eve", image: img397 },
   { id: 28, name: "Kate Beckinsale", image: img314 },
   { id: 29, name: "Tamannaah Bhatia", image: img315 },
+  { id: 50, name: "Cristen Harpers", image: img376 },
   { id: 30, name: "Ana De Armas", image: img316 },
   { id: 31, name: "Sandeep Dhar", image: img317 },
+  { id: 51, name: "Brooklyn Decker", image: img377 },
   { id: 32, name: "Madison Beer", image: img318 },
+  { id: 58, name: "Yvonne Strahovski", image: img395 },
   { id: 33, name: "Nora Fatehi", image: img319 },
   { id: 34, name: "Monica Bellucci", image: img320 },
+  { id: 52, name: "Bar Refaeli", image: img378 },
   { id: 35, name: "Disha Patani", image: img321 },
+  { id: 53, name: "Alessandra Ambrosio", image: img379 },
   { id: 36, name: "Megan Fox", image: img322 },
+  { id: 54, name: "Candice Swanepoel", image: img380 },
   { id: 37, name: "Nikki Tamboli", image: img323 },
   { id: 38, name: "Elisha Cuthbert", image: img324 },
+  { id: 55, name: "Adriana Lima", image: img381 },
   { id: 39, name: "Puja Banerjee", image: img325 },
+  { id: 59, name: "Nicky Whelan", image: img396 },
   { id: 40, name: "Sydney Sweeney", image: img326 },
+  { id: 56, name: "Irina Shayk", image: img382 },
   { id: 41, name: "Sunny Leone", image: img327 },
   { id: 42, name: "Kate Upton", image: img328 },
 ]

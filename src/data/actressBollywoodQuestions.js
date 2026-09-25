@@ -38,15 +38,36 @@ import img319 from "../assets/image copy 319.png"
 import img321 from "../assets/image copy 321.png"
 import img325 from "../assets/image copy 325.png"
 import img327 from "../assets/image copy 327.png"
+import img383 from "../assets/image copy 383.png"
+import img384 from "../assets/image copy 384.png"
+import img385 from "../assets/image copy 385.png"
+import img386 from "../assets/image copy 386.png"
+import img387 from "../assets/image copy 387.png"
+import img388 from "../assets/image copy 388.png"
+import img389 from "../assets/image copy 389.png"
+import img390 from "../assets/image copy 390.png"
+import img391 from "../assets/image copy 391.png"
+import img392 from "../assets/image copy 392.png"
+import img393 from "../assets/image copy 393.png"
+
 
 export const actressBollywoodQuestions = [
   { id: 1, name: "Sapna Pabbi", image: img329 },
   { id: 2, name: "Diana Penty", image: img330 },
   { id: 3, name: "Avneet Kaur", image: img331 },
+  { id: 41, name: "Yami Gautam", image: img383 },
+
   { id: 4, name: "Kajal Aggarwal", image: img332 },
+
   { id: 5, name: "Priyanka Chopra", image: img289 },
+  { id: 42, name: "Mahira Sharma", image: img384 },
+
   { id: 6, name: "Karishma Sharma", image: img333 },
   { id: 7, name: "Sonam Bajwa", image: img334 },
+  { id: 42, name: "Rashmika Mandanna", image: img385 },
+  { id: 43, name: "Mouni Roy", image: img386 },
+  { id: 44, name: "Shriya Saran", image: img387 },
+  { id: 46, name: "Kiara Advani", image: img389 },
   { id: 8, name: "Sana Khan", image: img335 },
   { id: 9, name: "Amyra Dastur", image: img336 },
   { id: 10, name: "Sharvari Wagh", image: img293 },
@@ -56,9 +77,15 @@ export const actressBollywoodQuestions = [
   { id: 14, name: "Pooja Hegde", image: img339 },
   { id: 15, name: "Neha Sharma", image: img340 },
   { id: 16, name: "Keerthy Suresh", image: img341 },
+  { id: 47, name: "Shanaya Kapoor", image: img391 },
+
   { id: 17, name: "Ananya Pandey", image: img288 },
+  { id: 45, name: "Kareena Kapoor", image: img388 },
+  { id: 48, name: "Tapsee Pannu", image: img392 },
+
   { id: 18, name: "Shraddha Kapoor", image: img342 },
   { id: 19, name: "Riya Sen", image: img296 },
+  { id: 46, name: "Kriti Kharbanda", image: img390 },
   { id: 20, name: "Riya Chakraborty", image: img343 },
   { id: 21, name: "Shweta Tiwari", image: img344 },
   { id: 22, name: "Alia Bhatt", image: img292 },
@@ -75,6 +102,7 @@ export const actressBollywoodQuestions = [
   { id: 33, name: "Urvashi Rautela", image: img348 },
   { id: 34, name: "Tamannaah Bhatia", image: img315 },
   { id: 35, name: "Sandeep Dhar", image: img317 },
+  { id: 49, name: "Bipasha Basu", image: img393 },
   { id: 36, name: "Jahnvi Kapoor", image: img311 },
   { id: 37, name: "Nora Fatehi", image: img319 },
   { id: 38, name: "Disha Patani", image: img321 },

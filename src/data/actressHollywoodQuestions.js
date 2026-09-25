@@ -31,6 +31,15 @@ import img324 from "../assets/image copy 324.png"
 import img326 from "../assets/image copy 326.png"
 import img320 from "../assets/image copy 320.png"
 import img328 from "../assets/image copy 328.png"
+import img364 from "../assets/image copy 364.png"
+import img294 from "../assets/image copy 294.png"
+import img365 from "../assets/image copy 365.png"
+import img366 from "../assets/image copy 366.png"
+import img367 from "../assets/image copy 367.png"
+import img368 from "../assets/image copy 368.png"
+
+
+
 
 export const actressHollywoodQuestions = [
   { id: 1, name: "Hailey Steinfeld", image: img349 },
@@ -42,15 +51,17 @@ export const actressHollywoodQuestions = [
   { id: 7, name: "Millie Bobby Brown", image: img355 },
   { id: 8, name: "Sadie Sink", image: img356 },
   { id: 9, name: "Jennifer Lawrence", image: img297 },
+  { id: 37, name: "Cobie Smulders", image: img366 },
   { id: 10, name: "Sofia Vergara", image: img357 },
-  { id: 11, name: "Kendall Jenner", image: img358 },
+  { id: 38, name: "Salma Hayek", image: img367 },
+  { id: 11, name: "Kendall Jenner", image: img364 },
   { id: 12, name: "Courteney Cox", image: img301 },
   { id: 13, name: "Victoria Justice", image: img358 },
   { id: 14, name: "Sophie Turner", image: img359 },
   { id: 15, name: "Elizabeth Olsen", image: img287 },
   { id: 16, name: "Angelina Jolie", image: img360 },
   { id: 17, name: "Alexandra Daddario", image: img298 },
-  { id: 18, name: "Dakota Johnson", image: img290 },
+  { id: 39, name: "Amber Head", image: img368 },
   { id: 19, name: "Dua Lipa", image: img295 },
   { id: 20, name: "Gigi Hadid", image: img361 },
   { id: 21, name: "Kylie Jenner", image: img310 },
@@ -58,7 +69,9 @@ export const actressHollywoodQuestions = [
   { id: 23, name: "Scarlett Johansson", image: img305 },
   { id: 24, name: "Kate Beckinsale", image: img314 },
   { id: 25, name: "Anne Hathaway", image: img307 },
-  { id: 26, name: "Margot Robbie", image: img295 },
+  { id: 26, name: "Margot Robbie", image: img294 },
+  { id: 18, name: "Dakota Johnson", image: img290 },
+  { id: 36, name: "Jessica Lowndes", image: img365 },
   { id: 27, name: "Jennifer Connelly", image: img304 },
   { id: 28, name: "Ana De Armas", image: img316 },
   { id: 29, name: "Madison Beer", image: img318 },

@@ -48,6 +48,7 @@ const CATEGORIES = [
     bgImage: bgActress,
     hasSubMenu: true,
     isSurvivor: true,
+    countLabel: '3 categories',
     getQuestions: () => actressAllQuestions,
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -178,6 +179,7 @@ function ScreenBackground() {
 // ─── Reusable Category Card ────────────────────────────────────────────────────
 function CategoryCard({ cat, onClick }) {
   const count = cat.getQuestions().length
+  const countDisplay = cat.countLabel ?? (count === 0 ? 'Coming soon' : `${count} ${count === 1 ? 'choice' : 'choices'}`)
   return (
     <button
       type="button"
@@ -212,7 +214,7 @@ function CategoryCard({ cat, onClick }) {
               {cat.badge}
             </span>
             <span className="text-xs font-bold text-slate-300 bg-slate-950/80 px-3 py-1 rounded-full border border-white/10 backdrop-blur-md shadow-inner">
-              {count === 0 ? 'Coming soon' : `${count} ${count === 1 ? 'choice' : 'choices'}`}
+              {countDisplay}
             </span>
           </div>
         </div>
@@ -275,17 +277,17 @@ export default function CategorySelectScreen({ onSelectCategory }) {
   // ── Actress sub-selection screen ───────────────────────────────────────────
   if (showActressSubMenu) {
     return (
-      <div className="relative min-h-screen text-slate-100 flex flex-col items-center justify-center px-4 py-8 sm:py-12 overflow-x-hidden selection:bg-pink-500 selection:text-white">
+      <div className="relative min-h-screen text-slate-100 flex flex-col items-center justify-center px-2 sm:px-4 py-8 sm:py-12 overflow-x-hidden selection:bg-pink-500 selection:text-white">
         <ScreenBackground />
 
-        <div className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center">
+        <div className="relative z-10 w-full max-w-5xl mx-auto flex flex-col items-center">
           {/* Back button */}
           <button
             type="button"
             onClick={() => setShowActressSubMenu(false)}
-            className="self-start mb-6 flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 backdrop-blur-md border border-white/15 text-slate-200 text-sm font-semibold hover:bg-white/20 hover:text-white hover:-translate-x-1 active:scale-95 transition-all duration-200"
+            className="self-start mb-6 flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900/90 backdrop-blur-md border border-pink-400/70 text-white text-sm font-bold shadow-[0_0_18px_rgba(244,63,94,0.45)] hover:bg-slate-800 hover:border-pink-400 hover:shadow-[0_0_28px_rgba(244,63,94,0.65)] hover:-translate-x-1 active:scale-95 transition-all duration-200"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-pink-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
             Back
@@ -308,8 +310,8 @@ export default function CategorySelectScreen({ onSelectCategory }) {
             </p>
           </header>
 
-          {/* Sub-category grid (3 columns) */}
-          <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
+          {/* Sub-category grid (3 columns) — max-w-5xl + wider gap for more spacious cards */}
+          <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             {ACTRESS_SUBCATEGORIES.map((sub) => (
               <CategoryCard key={sub.id} cat={sub} onClick={handleSubCategoryClick} />
             ))}

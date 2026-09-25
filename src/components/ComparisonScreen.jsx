@@ -319,28 +319,12 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
       <div className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center">
         {/* Header / Title */}
         <header className="text-center mb-6 sm:mb-8 flex flex-col items-center">
-          <div className="flex items-center gap-3 mb-3">
-            {/* Mode Badge */}
-            <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-slate-900/90 backdrop-blur-md border border-white/15 shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
-              <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_rgba(34,211,238,0.8)]"></span>
-              <span className="text-sm font-bold tracking-widest uppercase text-cyan-200">
-                {category?.title ? `Mode: ${category.title}` : 'Interactive Choice Game'}
-              </span>
-            </div>
-
-            {/* Modes Button */}
-            {onBackToCategories && (
-              <button
-                type="button"
-                onClick={onBackToCategories}
-                className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-slate-800/95 hover:bg-slate-700 backdrop-blur-md border border-cyan-400/40 hover:border-cyan-400/80 text-sm font-bold text-slate-200 hover:text-white transition-all duration-200 cursor-pointer shadow-[0_4px_20px_rgba(0,0,0,0.5)] hover:shadow-[0_0_20px_rgba(6,182,212,0.35)] hover:scale-105 active:scale-95"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-                <span>Modes</span>
-              </button>
-            )}
+          {/* Mode Badge - Centered as the primary focus option */}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900/90 backdrop-blur-md border border-white/15 shadow-[0_4px_20px_rgba(0,0,0,0.5)] mb-3">
+            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_rgba(34,211,238,0.8)]"></span>
+            <span className="text-xs font-bold tracking-widest uppercase text-cyan-200">
+              {category?.title ? `Mode: ${category.title}` : 'Interactive Choice Game'}
+            </span>
           </div>
 
           <h1 className="font-['Outfit',sans-serif] text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-none bg-gradient-to-r from-cyan-400 via-teal-300 to-pink-500 bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(6,182,212,0.3)]">
@@ -436,16 +420,16 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
                   </svg>
                 </button>
 
-                {/* Categories */}
+                {/* Home Button */}
                 {onBackToCategories && (
                   <button
                     onClick={onBackToCategories}
                     className="group font-['Outfit',sans-serif] inline-flex items-center justify-center gap-2 px-6 py-3 text-base font-bold rounded-2xl cursor-pointer bg-white/8 backdrop-blur-md border border-white/20 text-slate-200 hover:bg-white/15 hover:border-cyan-400/40 hover:text-white hover:shadow-[0_8px_30px_rgba(6,182,212,0.2)] hover:scale-[1.03] active:scale-95 transition-all duration-200"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                     </svg>
-                    <span>Categories</span>
+                    <span>Home</span>
                   </button>
                 )}
 
@@ -465,29 +449,30 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
         ) : (
           /* ════════════ ACTIVE COMPARISON SCREEN ════════════ */
           <div className="w-full flex flex-col items-center">
-            {/* Top Bar with Back Button and Progress Indicator */}
-            <div className="w-full max-w-xl mb-6 sm:mb-8 flex flex-col px-2">
-              <div className="flex items-center justify-between w-full text-xs font-semibold tracking-wider text-slate-300 mb-2.5 min-h-[44px]">
-                {/* Back Button (hidden on first question/battle) */}
+            {/* Top Bar with Back Button, Center Counter, Home Button, and Progress Indicator */}
+            {/* Unified max-width container: both the nav row and progress bar are constrained together */}
+            <div className="w-full max-w-xl mb-6 sm:mb-8 flex flex-col">
+              <div className="flex items-center justify-between w-full text-xs font-semibold tracking-wider text-slate-300 mb-3 min-h-[36px]">
+                {/* Back Button (hidden on first question/battle, but keeps spacing balance) */}
                 {canGoBack ? (
                   <button
                     type="button"
                     onClick={handleBack}
                     disabled={isTransitioning}
-                    className="group inline-flex items-center gap-2 px-5 py-2 rounded-full bg-slate-800/95 hover:bg-slate-700 text-slate-200 hover:text-white border border-cyan-400/40 hover:border-cyan-400/80 backdrop-blur-md text-sm font-bold tracking-wide shadow-[0_4px_20px_rgba(0,0,0,0.5)] hover:shadow-[0_0_20px_rgba(6,182,212,0.35)] hover:-translate-x-0.5 active:scale-95 transition-all duration-200 cursor-pointer"
+                    className="group inline-flex items-center gap-1.5 px-3 sm:px-4 py-1.5 rounded-full bg-slate-800/95 hover:bg-slate-700 text-slate-200 hover:text-white border border-cyan-400/40 hover:border-cyan-400/80 backdrop-blur-md text-xs font-bold tracking-wide shadow-[0_4px_20px_rgba(0,0,0,0.5)] hover:shadow-[0_0_20px_rgba(6,182,212,0.35)] hover:-translate-x-0.5 active:scale-95 transition-all duration-200 cursor-pointer"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 transition-transform duration-200 group-hover:-translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 transition-transform duration-200 group-hover:-translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
                     </svg>
                     <span>Back</span>
                   </button>
                 ) : (
-                  <div className="w-24" />
+                  <div className="w-16 sm:w-20" />
                 )}
 
                 {/* Center Counter */}
-                <span className="flex items-center gap-1.5 text-cyan-200">
-                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                <span className="flex items-center gap-1.5 text-cyan-200 text-xs font-semibold tracking-wider">
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
                   {isSurvivor ? (
                     <>
                       Face-Off <span className="text-white font-bold">{currentBattle}</span> of {totalBattles}
@@ -499,18 +484,35 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
                   )}
                 </span>
 
-                {/* Percentage */}
-                <span className="text-pink-400 font-bold tracking-normal text-right w-16">
-                  {progressPercent}%
-                </span>
+                {/* Home Button (Top Right — right edge aligns with progress bar end) */}
+                {onBackToCategories ? (
+                  <button
+                    type="button"
+                    onClick={onBackToCategories}
+                    className="group inline-flex items-center gap-1.5 px-3 sm:px-4 py-1.5 rounded-full bg-slate-800/95 hover:bg-slate-700 text-slate-200 hover:text-white border border-cyan-400/40 hover:border-cyan-400/80 backdrop-blur-md text-xs font-bold tracking-wide shadow-[0_4px_20px_rgba(0,0,0,0.5)] hover:shadow-[0_0_20px_rgba(6,182,212,0.35)] hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 text-cyan-400 transition-transform duration-200 group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    <span>Home</span>
+                  </button>
+                ) : (
+                  <div className="w-16 sm:w-20" />
+                )}
               </div>
 
-              {/* Progress Bar */}
-              <div className="w-full bg-slate-950/90 backdrop-blur-md rounded-full h-3 overflow-hidden border border-white/10 p-0.5 shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]">
+              {/* Progress Bar — full width matches nav row.
+                   % is overlaid INSIDE the pill at its right end, inline with the bar. */}
+              <div className="relative w-full h-5 rounded-full bg-slate-950/90 backdrop-blur-md border border-white/10 overflow-hidden shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]">
+                {/* Colored fill */}
                 <div
-                  className="bg-gradient-to-r from-cyan-400 via-teal-400 to-pink-500 h-full rounded-full transition-all duration-500 ease-out shadow-[0_0_14px_rgba(34,211,238,0.7)]"
+                  className="absolute inset-0 rounded-full bg-gradient-to-r from-cyan-400 via-teal-400 to-pink-500 transition-all duration-500 ease-out shadow-[0_0_14px_rgba(34,211,238,0.7)]"
                   style={{ width: `${progressPercent}%` }}
                 />
+                {/* % text — floats above fill, right-aligned inside pill */}
+                <span className="absolute inset-0 flex items-center justify-end pr-2.5 text-pink-300 font-bold text-[10px] leading-none z-10 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                  {progressPercent}%
+                </span>
               </div>
             </div>
 

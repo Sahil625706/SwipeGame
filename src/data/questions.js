@@ -162,8 +162,6 @@ import img174 from '../assets/image copy 174.png'
 import img175 from '../assets/image copy 175.png'
 import img176 from '../assets/image copy 176.png'
 import img177 from '../assets/image copy 177.png'
-import img178 from '../assets/image copy 178.png'
-import img179 from '../assets/image copy 179.png'
 import img180 from '../assets/image copy 180.png'
 import img181 from '../assets/image copy 181.png'
 import img182 from '../assets/image copy 182.png'
@@ -198,6 +196,16 @@ import img204 from '../assets/image copy 204.png'
 import img205 from '../assets/image copy 205.png'
 import img206 from '../assets/image copy 206.png'
 import img207 from '../assets/image copy 207.png'
+import img398 from '../assets/image copy 398.png'
+import img399 from '../assets/image copy 399.png'
+import img400 from '../assets/image copy 400.png'
+import img401 from '../assets/image copy 401.png'
+import img402 from '../assets/image copy 402.png'
+import img403 from '../assets/image copy 403.png'
+import img404 from '../assets/image copy 404.png'
+import img405 from '../assets/image copy 405.png'
+import img406 from '../assets/image copy 406.png'
+import img407 from '../assets/image copy 407.png'
 
 export const questions = [
   { id: 1, optionA: "Control Mind", optionAImage: img11, optionB: "Control Animals", optionBImage: img10 },
@@ -286,7 +294,6 @@ export const questions = [
   { id: 84, optionA: "Primarina(Pokemon) looks more elegant", optionAImage: img172, optionB: "Ninetales(Pokemon) looks more elegant", optionBImage: img173 },
   { id: 85, optionA: "Blake Lively looks more ethereal in this outfit?", optionAImage: img174, optionB: "Emma Chamberlain looks more ethereal in this outfit?", optionBImage: img175 },
   { id: 86, optionA: "Anok Yai looks more Classy?", optionAImage: img176, optionB: "Tyla looks more Classy?", optionBImage: img177 },
-  { id: 87, optionA: "Wamiqa Gabbi is more Damn", optionAImage: img178, optionB: "Sharvari Wagh is more Damn", optionBImage: img179 },
   { id: 88, optionA: "Tripti Dimri is more Cutie?", optionAImage: img180, optionB: "Shraddha Kapoor is more Cutie? ", optionBImage: img181, category: "actress" },
   { id: 89, optionA: "Never get help from any AI again", optionAImage: img182, optionB: "Never ask for help from another human again", optionBImage: img183 },
   { id: 90, optionA: "Enjoy playing games on Phone/Tablet?", optionAImage: img186, optionB: "Enjoy playing games on PC?", optionBImage: img187 },
@@ -299,5 +306,10 @@ export const questions = [
   { id: 97, optionA: "Drive Formula 1 car", optionAImage: img200, optionB: "Drive Lamborghini", optionBImage: img201 },
   { id: 98, optionA: "Rule the streets with multiple Batmobiles?", optionAImage: img203, optionB: "Dominate the skies with a Fighter Jet?", optionBImage: img202 },
   { id: 99, optionA: "Be extremely Rich with everything material but no love or relationships", optionAImage: img204, optionB: "Live a simple life with less money but with true love, friends, and family", optionBImage: img205 },
-  { id: 100, optionA: "Be an Extrovert that everyone hates", optionAImage: img207, optionB: "Be an Introvert that no one really cares about", optionBImage: img206 }
+  { id: 100, optionA: "Be an Extrovert that everyone hates", optionAImage: img207, optionB: "Be an Introvert that no one really cares about", optionBImage: img206 },
+  { id: 101, optionA: "Wake up without any alarm, at the exact time you want", optionAImage: img398, optionB: "Fall asleep whenever you want", optionBImage: img399 },
+  { id: 102, optionA: "Always find the shortest line/queue", optionAImage: img400, optionB: "Always find a parking spot instantly", optionBImage: img401 },
+  { id: 103, optionA: "Never experience boredom again", optionAImage: img402, optionB: "Never experience stress again", optionBImage: img403 },
+  { id: 104, optionA: "Lose both thumbs", optionAImage: img404, optionB: "Lose both index fingers", optionBImage: img405 },
+  { id: 105, optionA: "Have a personal Helper/Worker", optionAImage: img406, optionB: "Have a personal Chef", optionBImage: img407 }
 ];
