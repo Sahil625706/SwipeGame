@@ -554,19 +554,35 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
                     {/* Card Top Media Container */}
                     <div className="relative w-full aspect-[4/3] overflow-hidden bg-[#0a0b12]/90 backdrop-blur-sm flex items-center justify-center p-3 border-b border-white/10">
                       {isVideo ? (
-                        <video
-                          key={imageSrc}
-                          src={imageSrc}
-                          autoPlay
-                          muted
-                          playsInline
-                          controls
-                          disablePictureInPicture
-                          disableRemotePlayback
-                          controlsList="nofullscreen noremoteplayback"
-                          onClick={(e) => e.stopPropagation()}
-                          className="w-full h-full object-contain bg-black rounded-2xl drop-shadow-[0_8px_20px_rgba(0,0,0,0.5)]"
-                        />
+                        <>
+                          <video
+                            key={imageSrc}
+                            src={imageSrc}
+                            autoPlay
+                            muted
+                            playsInline
+                            controls
+                            disablePictureInPicture
+                            disableRemotePlayback
+                            controlsList="nofullscreen noremoteplayback"
+                            className="w-full h-full object-contain bg-black rounded-2xl drop-shadow-[0_8px_20px_rgba(0,0,0,0.5)]"
+                          />
+                          {/* Transparent overlay covers the upper ~80% of the video so clicking the
+                              video area selects the card, while the bottom strip (native controls)
+                              is left uncovered so play/pause/volume controls work normally. */}
+                          <div
+                            className="absolute inset-0 cursor-pointer"
+                            style={{ bottom: '20%' }}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              if (!isTransitioning) {
+                                if (isSurvivor) handleSelectSurvivor('optionA')
+                                else handleSelectClassic('optionA')
+                              }
+                            }}
+                            aria-hidden="true"
+                          />
+                        </>
                       ) : (
                         <img
                           key={imageSrc}
@@ -648,19 +664,35 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
                     {/* Card Top Media Container */}
                     <div className="relative w-full aspect-[4/3] overflow-hidden bg-[#0a0b12]/90 backdrop-blur-sm flex items-center justify-center p-3 border-b border-white/10">
                       {isVideo ? (
-                        <video
-                          key={imageSrc}
-                          src={imageSrc}
-                          autoPlay
-                          muted
-                          playsInline
-                          controls
-                          disablePictureInPicture
-                          disableRemotePlayback
-                          controlsList="nofullscreen noremoteplayback"
-                          onClick={(e) => e.stopPropagation()}
-                          className="w-full h-full object-contain bg-black rounded-2xl drop-shadow-[0_8px_20px_rgba(0,0,0,0.5)]"
-                        />
+                        <>
+                          <video
+                            key={imageSrc}
+                            src={imageSrc}
+                            autoPlay
+                            muted
+                            playsInline
+                            controls
+                            disablePictureInPicture
+                            disableRemotePlayback
+                            controlsList="nofullscreen noremoteplayback"
+                            className="w-full h-full object-contain bg-black rounded-2xl drop-shadow-[0_8px_20px_rgba(0,0,0,0.5)]"
+                          />
+                          {/* Transparent overlay covers the upper ~80% of the video so clicking the
+                              video area selects the card, while the bottom strip (native controls)
+                              is left uncovered so play/pause/volume controls work normally. */}
+                          <div
+                            className="absolute inset-0 cursor-pointer"
+                            style={{ bottom: '20%' }}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              if (!isTransitioning) {
+                                if (isSurvivor) handleSelectSurvivor('optionB')
+                                else handleSelectClassic('optionB')
+                              }
+                            }}
+                            aria-hidden="true"
+                          />
+                        </>
                       ) : (
                         <img
                           key={imageSrc}
