@@ -59,7 +59,7 @@ const CATEGORIES = [
   {
     id: 'actor',
     title: 'Face Off: Male',
-    subtitle: "Hollywood, Bollywood, and beyond — one ultimate showdown",
+    subtitle: "Who's got more charm and style? Hollywood, Bollywood, and more",
     badge: 'CELEBRITY',
     color: 'from-purple-400 via-violet-300 to-purple-500',
     borderGlow: 'hover:border-purple-400/90 hover:shadow-[0_0_45px_rgba(168,85,247,0.45)]',
@@ -103,7 +103,7 @@ const ACTRESS_SUBCATEGORIES = [
   {
     id: 'actress-all',
     title: 'All',
-    subtitle: 'Hollywood meets Bollywood, one ultimate showdown',
+    subtitle: 'Hollywood, Bollywood, and Beyond — one ultimate showdown',
     color: 'from-pink-400 via-rose-300 to-fuchsia-400',
     borderGlow: 'hover:border-pink-400/90 hover:shadow-[0_0_45px_rgba(244,63,94,0.5)]',
     badgeColor: 'bg-pink-500/25 text-pink-200 border-pink-400/40 shadow-[0_0_15px_rgba(244,63,94,0.35)]',
