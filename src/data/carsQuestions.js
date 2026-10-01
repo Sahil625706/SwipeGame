@@ -45,6 +45,11 @@ import img236 from "../assets/image copy 236.png"
 import img237 from "../assets/image copy 237.png"
 import img238 from "../assets/image copy 238.png"
 import img239 from "../assets/image copy 239.png"
+import img178 from "../assets/image copy 178.png"
+import img179 from "../assets/image copy 179.png"
+import img408 from "../assets/image copy 408.png"
+import img409 from "../assets/image copy 409.png"
+import img410 from "../assets/image copy 410.png"
 
 export const carsQuestions = [
   { id: 1, name: "Nissan Rt4 GT", image: img60 },
@@ -67,11 +72,13 @@ export const carsQuestions = [
   { id: 18, name: "Rolls Royce Spectre", image: img211 },
   { id: 19, name: "McLaren Senna", image: img212 },
   { id: 20, name: "BMW i8", image: img213 },
+  { id: 51, name: "Mercedes Benz 300 SL Gullwing", image: img409 },
   { id: 21, name: "Pagani Zonda F", image: img214 },
   { id: 22, name: "DS X E-Tense", image: img215 },
   { id: 23, name: "Rolls Royce Dawn Eros", image: img216 },
   { id: 24, name: "Renault Trezor", image: img218 },
   { id: 25, name: "Porsche 918 Spyder", image: img219 },
+  { id: 48, name: "ssc tuatara striker", image: img178 },
   { id: 26, name: "Rolls Royce Boat Tail", image: img220 },
   { id: 27, name: "Mercedes-AMG Vision Gran Turismo", image: img221 },
   { id: 28, name: "BMW Vision Next 100", image: img222 },
@@ -80,7 +87,9 @@ export const carsQuestions = [
   { id: 31, name: "Koenigsegg Jesko Absolut", image: img225 },
   { id: 33, name: "Ferrari SP2 Monza", image: img184 },
   { id: 34, name: "Pagani Zonda HP Barchetta", image: img226 },
+  { id: 49, name: "Toyota Supra", image: img179 },
   { id: 35, name: "Bugatti Bolide", image: img227 },
+  { id: 52, name: "Ford Mustang Boss 429", image: img410 },
   { id: 36, name: "Peugeot Onyx", image: img228 },
   { id: 37, name: "Hyperion XP1", image: img229 },
   { id: 38, name: "Pagani Huayra Codalunga", image: img230 },
@@ -88,6 +97,7 @@ export const carsQuestions = [
   { id: 40, name: "Mercedes EQ Silver Arrow", image: img232 },
   { id: 41, name: "Porsche Mission X", image: img233 },
   { id: 42, name: "Lamborghini Terzo Millennio", image: img234 },
+  { id: 50, name: "Lamborghini Countach", image: img408 },
   { id: 32, name: "Bugatti Chiron", image: img363 },
   { id: 43, name: "Apollo Evo", image: img235 },
   { id: 44, name: "Alpine Alpenglow", image: img236 },
