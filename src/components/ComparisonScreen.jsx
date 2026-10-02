@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { questions } from '../data/questions'
+import YouTubeEmbed from './YouTubeEmbed'
 
 // ── Fisher-Yates shuffle (used only in Classic / Everything mode) ──
 function shuffleArray(arr) {
@@ -531,6 +532,9 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
                 const label = isSurvivor ? leftItem?.name : currentQuestion?.optionA
                 const imageSrc = isSurvivor ? leftItem?.image : currentQuestion?.optionAImage
                 const isVideo = !isSurvivor && currentQuestion?.optionAType === 'video'
+                const isYoutube = !isSurvivor && currentQuestion?.optionAType === 'youtube'
+                const isShorts = currentQuestion?.optionAAspectRatio === '9/16' || currentQuestion?.optionAIsShorts
+                const hideTitleCover = Boolean(currentQuestion?.optionAHideTitleCover)
 
                 return (
                   <button
@@ -553,7 +557,19 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
                   >
                     {/* Card Top Media Container */}
                     <div className="relative w-full aspect-[4/3] overflow-hidden bg-[#0a0b12]/90 backdrop-blur-sm flex items-center justify-center p-3 border-b border-white/10">
-                      {isVideo ? (
+                      {isYoutube ? (
+                        <YouTubeEmbed
+                          key={`${currentQuestion?.id}-optionA`}
+                          url={imageSrc}
+                          label={label}
+                          isShorts={isShorts}
+                          hideTitleCover={hideTitleCover}
+                          startTime={currentQuestion?.optionAStart}
+                          endTime={currentQuestion?.optionAEnd}
+                          questionId={currentQuestion?.id}
+                          optionKey="optionA"
+                        />
+                      ) : isVideo ? (
                         <>
                           <video
                             key={imageSrc}
@@ -641,6 +657,9 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
                 const label = isSurvivor ? rightItem?.name : currentQuestion?.optionB
                 const imageSrc = isSurvivor ? rightItem?.image : currentQuestion?.optionBImage
                 const isVideo = !isSurvivor && currentQuestion?.optionBType === 'video'
+                const isYoutube = !isSurvivor && currentQuestion?.optionBType === 'youtube'
+                const isShorts = currentQuestion?.optionBAspectRatio === '9/16' || currentQuestion?.optionBIsShorts
+                const hideTitleCover = Boolean(currentQuestion?.optionBHideTitleCover)
 
                 return (
                   <button
@@ -663,7 +682,19 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
                   >
                     {/* Card Top Media Container */}
                     <div className="relative w-full aspect-[4/3] overflow-hidden bg-[#0a0b12]/90 backdrop-blur-sm flex items-center justify-center p-3 border-b border-white/10">
-                      {isVideo ? (
+                      {isYoutube ? (
+                        <YouTubeEmbed
+                          key={`${currentQuestion?.id}-optionB`}
+                          url={imageSrc}
+                          label={label}
+                          isShorts={isShorts}
+                          hideTitleCover={hideTitleCover}
+                          startTime={currentQuestion?.optionBStart}
+                          endTime={currentQuestion?.optionBEnd}
+                          questionId={currentQuestion?.id}
+                          optionKey="optionB"
+                        />
+                      ) : isVideo ? (
                         <>
                           <video
                             key={imageSrc}
