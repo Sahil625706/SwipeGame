@@ -72,6 +72,7 @@ export default function YouTubeEmbed({
   endTime,
   questionId,
   optionKey,
+  fillContainer,
 }) {
   const containerRef = useRef(null)
   const playerRef = useRef(null)
@@ -352,6 +353,103 @@ export default function YouTubeEmbed({
 
   const progressPercent = Math.max(0, Math.min(100, (currentClipSec / clipDuration) * 100))
 
+  // Shared control bar — used by both render paths below
+  const controlBar = (
+    <div
+      className="absolute bottom-0 left-0 right-0 z-40 p-2 sm:p-2.5 bg-gradient-to-t from-black/90 via-black/60 to-transparent flex items-center gap-2 sm:gap-2.5"
+      onClick={(e) => e.stopPropagation()}
+    >
+      {/* Custom Small Play / Pause Button at bottom-left */}
+      <button
+        type="button"
+        onClick={togglePlayPause}
+        className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/15 hover:bg-white/25 text-white flex items-center justify-center backdrop-blur-sm transition-all shrink-0 cursor-pointer"
+        aria-label={isPlaying ? 'Pause' : 'Play'}
+      >
+        {isPlaying ? (
+          <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+          </svg>
+        ) : (
+          <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 translate-x-0.5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z" />
+          </svg>
+        )}
+      </button>
+
+      {/* Simple Plain White Progress Bar */}
+      <div
+        ref={progressBarRef}
+        onPointerDown={handlePointerDown}
+        className="flex-1 h-4 flex items-center cursor-pointer group/bar relative"
+      >
+        {/* Thin background track */}
+        <div className="w-full h-1 rounded-full bg-white/25 overflow-hidden relative">
+          {/* Solid plain white fill */}
+          <div
+            className="h-full rounded-full bg-white transition-[width] duration-75 ease-linear"
+            style={{ width: `${progressPercent}%` }}
+          />
+        </div>
+        {/* Small clean white knob */}
+        <div
+          className={`absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-white transition-transform ${
+            isDragging ? 'scale-125' : 'group-hover/bar:scale-125'
+          }`}
+          style={{ left: `${progressPercent}%` }}
+        />
+      </div>
+
+      {/* Clip Time Display */}
+      <span className="text-[10px] sm:text-xs font-mono font-medium text-white/90 shrink-0 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] select-none">
+        {formatTime(currentClipSec)} / {formatTime(clipDuration)}
+      </span>
+    </div>
+  )
+
+  // fillContainer mode: scale ONLY the inner video iframe layer (not the controls).
+  //
+  // Root cause of the previous bug: applying scale(4/3) to the whole element shifts
+  // children at left-0 visually off-screen by W/6 (since scale() anchors at center),
+  // and overflow-hidden clips them. Fix: scale only the iframe div; controls are on
+  // the outer wrapper so they are never inside the scaled region.
+  //
+  // Math: card = 4:3, iframe = 16:9 at w-full.
+  //   iframe height = W * 9/16 = 0.5625W; card height = W * 3/4 = 0.75W.
+  //   scale(4/3): visual height = 0.5625W * 4/3 = 0.75W = card height. ✓
+  //   visual width = W * 4/3 = 1.333W → clipped by outer overflow-hidden. ✓
+  if (fillContainer) {
+    return (
+      <div className="w-full aspect-[4/3] overflow-hidden relative rounded-2xl select-none group/player bg-black">
+        {/* Video iframe — only this div is scaled so controls stay unaffected */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+          <div
+            className="w-full aspect-video flex-shrink-0 [&>iframe]:w-full [&>iframe]:h-full [&>iframe]:border-0"
+            style={{ transform: 'scale(1.3334)' }}
+          >
+            <div id={uniquePlayerId} ref={containerRef} className="w-full h-full" />
+          </div>
+        </div>
+
+        {/* Poster image — above video, below controls */}
+        {videoId && (
+          <img
+            src={`https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`}
+            alt={label}
+            className={`absolute inset-0 w-full h-full object-cover z-20 pointer-events-none transition-opacity duration-200 ${
+              isPlaying ? 'opacity-0' : 'opacity-100'
+            }`}
+            loading="lazy"
+          />
+        )}
+
+        {/* Controls on outer wrapper — NOT inside the scaled div */}
+        {controlBar}
+      </div>
+    )
+  }
+
+  // Normal (non-fillContainer) path
   return (
     <div
       className={`relative group/player select-none overflow-hidden rounded-2xl flex items-center justify-center bg-black ${
@@ -360,8 +458,7 @@ export default function YouTubeEmbed({
           : 'w-full aspect-video max-h-full'
       }`}
     >
-      {/* Background Poster: covers the iframe when paused so YouTube's native big play button,
-          related video thumbnails, and end-screen cards in the bottom-right never bleed through */}
+      {/* Background Poster */}
       {videoId && (
         <img
           src={`https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`}
@@ -386,57 +483,7 @@ export default function YouTubeEmbed({
         />
       )}
 
-      {/* Custom Bottom Control Bar */}
-      <div
-        className="absolute bottom-0 left-0 right-0 z-40 p-2 sm:p-2.5 bg-gradient-to-t from-black/90 via-black/60 to-transparent flex items-center gap-2 sm:gap-2.5"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Custom Small Play / Pause Button at bottom-left */}
-        <button
-          type="button"
-          onClick={togglePlayPause}
-          className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/15 hover:bg-white/25 text-white flex items-center justify-center backdrop-blur-sm transition-all shrink-0 cursor-pointer"
-          aria-label={isPlaying ? 'Pause' : 'Play'}
-        >
-          {isPlaying ? (
-            <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-            </svg>
-          ) : (
-            <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 translate-x-0.5" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M8 5v14l11-7z" />
-            </svg>
-          )}
-        </button>
-
-        {/* Simple Plain White Progress Bar (thin track, solid white fill, no gradients/colors) */}
-        <div
-          ref={progressBarRef}
-          onPointerDown={handlePointerDown}
-          className="flex-1 h-4 flex items-center cursor-pointer group/bar relative"
-        >
-          {/* Thin background track */}
-          <div className="w-full h-1 rounded-full bg-white/25 overflow-hidden relative">
-            {/* Solid plain white fill */}
-            <div
-              className="h-full rounded-full bg-white transition-[width] duration-75 ease-linear"
-              style={{ width: `${progressPercent}%` }}
-            />
-          </div>
-          {/* Small clean white knob */}
-          <div
-            className={`absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-white transition-transform ${
-              isDragging ? 'scale-125' : 'group-hover/bar:scale-125'
-            }`}
-            style={{ left: `${progressPercent}%` }}
-          />
-        </div>
-
-        {/* Clip Time Display (e.g. 0:04 / 0:14) */}
-        <span className="text-[10px] sm:text-xs font-mono font-medium text-white/90 shrink-0 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] select-none">
-          {formatTime(currentClipSec)} / {formatTime(clipDuration)}
-        </span>
-      </div>
+      {controlBar}
     </div>
   )
 }

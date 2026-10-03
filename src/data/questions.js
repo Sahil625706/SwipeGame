@@ -160,14 +160,6 @@ import img180 from '../assets/image copy 180.png'
 import img181 from '../assets/image copy 181.png'
 import img182 from '../assets/image copy 182.png'
 import img183 from '../assets/image copy 183.png'
-import snakeVideo from '../assets/Snake.mp4'
-import fireVideo from '../assets/Fire.mp4'
-import haileyVideo from '../assets/haileyGB.mp4'
-import arianaVideo from '../assets/arianaGB.mp4'
-import gigihadidwalk from '../assets/GigiHadidWalk.mp4'
-import yasminwalk from '../assets/YasminWalk.mp4'
-import cliffdiving from '../assets/CliffDiving.mp4'
-import gymnasticvault from '../assets/GymnasticVault.mp4'
 import img186 from '../assets/image copy 186.png'
 import img187 from '../assets/image copy 187.png'
 import img188 from '../assets/image copy 188.png'
@@ -288,10 +280,6 @@ export const questions = [
   { id: 76, optionA: "Stephen Curry", optionAImage: img164, optionB: "Lebron James", optionBImage: img165 },
   { id: 77, optionA: "Ronaldo is G.O.A.T", optionAImage: img167, optionB: "Messi is G.O.A.T", optionBImage: img166 },
   { id: 78, optionA: "Randy Orton has better style", optionAImage: img168, optionB: "John Cena has better style", optionBImage: img169 },
-  { id: 79, optionA: "This dance looks more cooler?", optionAImage: snakeVideo, optionAType: "video", optionB: "This dance looks more cooler?", optionBImage: fireVideo, optionBType: "video" },
-  { id: 80, optionA: "Ariana Grande delivers better Glambot moment?", optionAImage: arianaVideo, optionAType: "video", optionB: "Hailey Bieber delivers better Glambot moment?", optionBImage: haileyVideo, optionBType: "video" },
-  { id: 81, optionA: "Be able to do Gymnastic Vault", optionAImage: gymnasticvault, optionAType: "video", optionB: "Be able to do Cliff Diving", optionBImage: cliffdiving, optionBType: "video" },
-  { id: 82, optionA: "Gigi Hadid's Walk?", optionAImage: gigihadidwalk, optionAType: "video", optionB: "Yasmin's Walk?", optionBImage: yasminwalk, optionBType: "video" },
   { id: 83, optionA: "Mewtwo(Pokemon) would Win", optionAImage: img170, optionB: "Dialga(Pokemon) would Win", optionBImage: img171 },
   { id: 84, optionA: "Primarina(Pokemon) looks more elegant", optionAImage: img172, optionB: "Ninetales(Pokemon) looks more elegant", optionBImage: img173 },
   { id: 85, optionA: "Blake Lively looks more ethereal in this outfit?", optionAImage: img174, optionB: "Emma Chamberlain looks more ethereal in this outfit?", optionBImage: img175 },
@@ -326,12 +314,14 @@ export const questions = [
     optionAAspectRatio: "16/9",
     optionAStart: 20,
     optionAEnd: 120,
+    optionAFillContainer: true,
     optionB: "Maya's Fire Dance",
     optionBImage: "https://www.youtube.com/embed/DI-WnfTA34E?start=50&end=130&controls=1&loop=1&playlist=DI-WnfTA34E",
     optionBType: "youtube",
     optionBAspectRatio: "16/9",
     optionBStart: 50,
-    optionBEnd: 130
+    optionBEnd: 132,
+    optionBFillContainer: true
   },
   {
     id: 111,
@@ -341,12 +331,14 @@ export const questions = [
     optionAAspectRatio: "16/9",
     optionAStart: 0,
     optionAEnd: 15,
+    optionAFillContainer: true,
     optionB: "Ariana's Glambot moment",
     optionBImage: "https://www.youtube.com/embed/4C0aEq0A81M?start=80&end=92&controls=1&loop=1&playlist=4C0aEq0A81M",
     optionBType: "youtube",
     optionBAspectRatio: "16/9",
     optionBStart: 80,
-    optionBEnd: 92
+    optionBEnd: 92,
+    optionBFillContainer: true
   },
   {
     id: 112,
@@ -355,13 +347,15 @@ export const questions = [
     optionAType: "youtube",
     optionAAspectRatio: "16/9",
     optionAStart: 369,
-    optionAEnd: 378,
+    optionAEnd: 379,
+    optionAFillContainer: true,
     optionB: "Yasmin's Walk",
     optionBImage: "https://www.youtube.com/embed/bCGx4a7TeMw?start=94&end=115&controls=1&loop=1&playlist=bCGx4a7TeMw",
     optionBType: "youtube",
     optionBAspectRatio: "16/9",
     optionBStart: 94,
-    optionBEnd: 115
+    optionBEnd: 116,
+    optionBFillContainer: true
   },
   {
     id: 113,
@@ -371,12 +365,14 @@ export const questions = [
     optionAAspectRatio: "16/9",
     optionAStart: 33,
     optionAEnd: 47,
+    optionAFillContainer: true,
     optionB: "Cliff Diving",
     optionBImage: "https://www.youtube.com/embed/V55DRE9vJSs?start=65&end=72&controls=1&loop=1&playlist=V55DRE9vJSs",
     optionBType: "youtube",
     optionBAspectRatio: "16/9",
     optionBStart: 65,
-    optionBEnd: 72
+    optionBEnd: 73,
+    optionBFillContainer: true
   },
   {
     id: 114,
@@ -385,13 +381,15 @@ export const questions = [
     optionAType: "youtube",
     optionAAspectRatio: "16/9",
     optionAStart: 887,
-    optionAEnd: 908,
+    optionAEnd: 910,
+    optionAFillContainer: true,
     optionB: "Basketball move",
     optionBImage: "https://www.youtube.com/embed/eOrzH0kmegw?start=1058&end=1076&controls=1&loop=1&playlist=eOrzH0kmegw",
     optionBType: "youtube",
     optionBAspectRatio: "16/9",
     optionBStart: 1058,
-    optionBEnd: 1076
+    optionBEnd: 1078,
+    optionBFillContainer: true
   },
   {
     id: 115,
@@ -400,13 +398,15 @@ export const questions = [
     optionAType: "youtube",
     optionAAspectRatio: "16/9",
     optionAStart: 275,
-    optionAEnd: 291,
+    optionAEnd: 292,
+    optionAFillContainer: true,
     optionB: "Basketball move",
     optionBImage: "https://www.youtube.com/embed/eOrzH0kmegw?start=292&end=310&controls=1&loop=1&playlist=eOrzH0kmegw",
     optionBType: "youtube",
     optionBAspectRatio: "16/9",
     optionBStart: 292,
-    optionBEnd: 310
+    optionBEnd: 312,
+    optionBFillContainer: true
   },
   {
     id: 116,
@@ -416,12 +416,14 @@ export const questions = [
     optionAAspectRatio: "16/9",
     optionAStart: 5,
     optionAEnd: 14,
+    optionAFillContainer: true,
     optionB: "Roberto Carlos's Goal",
     optionBImage: "https://www.youtube.com/embed/crKwlbwvr88?start=16&end=26&controls=1&loop=1&playlist=crKwlbwvr88",
     optionBType: "youtube",
     optionBAspectRatio: "16/9",
     optionBStart: 16,
-    optionBEnd: 26
+    optionBEnd: 26,
+    optionBFillContainer: true
   },
   {
     id: 117,
@@ -430,7 +432,7 @@ export const questions = [
     optionAType: "youtube",
     optionAAspectRatio: "9/16",
     optionAStart: 0,
-    optionAEnd: 11,
+    optionAEnd: 12,
     optionB: "This Moment",
     optionBImage: "https://www.youtube.com/embed/OZrIPTW0uF4?start=0&end=16&controls=1&loop=1&playlist=OZrIPTW0uF4",
     optionBType: "youtube",
@@ -461,13 +463,15 @@ export const questions = [
     optionAType: "youtube",
     optionAAspectRatio: "16/9",
     optionAStart: 0,
-    optionAEnd: 9,
+    optionAEnd: 11,
+    optionAFillContainer: true,
     optionB: "Anderson's Swing",
     optionBImage: "https://www.youtube.com/embed/42wexKw_o3A?start=120&end=130&controls=1&loop=1&playlist=42wexKw_o3A",
     optionBType: "youtube",
     optionBAspectRatio: "16/9",
     optionBStart: 120,
-    optionBEnd: 130
+    optionBEnd: 130,
+    optionBFillContainer: true
   }
 ];
 

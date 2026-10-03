@@ -535,6 +535,7 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
                 const isYoutube = !isSurvivor && currentQuestion?.optionAType === 'youtube'
                 const isShorts = currentQuestion?.optionAAspectRatio === '9/16' || currentQuestion?.optionAIsShorts
                 const hideTitleCover = Boolean(currentQuestion?.optionAHideTitleCover)
+                const fillContainer = Boolean(currentQuestion?.optionAFillContainer)
 
                 return (
                   <button
@@ -556,7 +557,9 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
                     }`}
                   >
                     {/* Card Top Media Container */}
-                    <div className="relative w-full aspect-[4/3] overflow-hidden bg-[#0a0b12]/90 backdrop-blur-sm flex items-center justify-center p-3 border-b border-white/10">
+                    <div className={`relative w-full aspect-[4/3] overflow-hidden bg-[#0a0b12]/90 backdrop-blur-sm flex items-center justify-center border-b border-white/10 ${
+                      isYoutube && fillContainer ? 'p-0' : 'p-3'
+                    }`}>
                       {isYoutube ? (
                         <YouTubeEmbed
                           key={`${currentQuestion?.id}-optionA`}
@@ -568,6 +571,7 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
                           endTime={currentQuestion?.optionAEnd}
                           questionId={currentQuestion?.id}
                           optionKey="optionA"
+                          fillContainer={fillContainer}
                         />
                       ) : isVideo ? (
                         <>
@@ -660,6 +664,7 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
                 const isYoutube = !isSurvivor && currentQuestion?.optionBType === 'youtube'
                 const isShorts = currentQuestion?.optionBAspectRatio === '9/16' || currentQuestion?.optionBIsShorts
                 const hideTitleCover = Boolean(currentQuestion?.optionBHideTitleCover)
+                const fillContainer = Boolean(currentQuestion?.optionBFillContainer)
 
                 return (
                   <button
@@ -681,7 +686,9 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
                     }`}
                   >
                     {/* Card Top Media Container */}
-                    <div className="relative w-full aspect-[4/3] overflow-hidden bg-[#0a0b12]/90 backdrop-blur-sm flex items-center justify-center p-3 border-b border-white/10">
+                    <div className={`relative w-full aspect-[4/3] overflow-hidden bg-[#0a0b12]/90 backdrop-blur-sm flex items-center justify-center border-b border-white/10 ${
+                      isYoutube && fillContainer ? 'p-0' : 'p-3'
+                    }`}>
                       {isYoutube ? (
                         <YouTubeEmbed
                           key={`${currentQuestion?.id}-optionB`}
@@ -693,6 +700,7 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
                           endTime={currentQuestion?.optionBEnd}
                           questionId={currentQuestion?.id}
                           optionKey="optionB"
+                          fillContainer={fillContainer}
                         />
                       ) : isVideo ? (
                         <>
