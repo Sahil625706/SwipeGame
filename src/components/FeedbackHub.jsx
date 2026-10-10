@@ -103,7 +103,7 @@ export default function FeedbackHub() {
           role="dialog"
           aria-modal="true"
           aria-labelledby="feedback-hub-title"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-black/75 backdrop-blur-md transition-all duration-300"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-slate-900/50 backdrop-blur-sm transition-all duration-300"
           onClick={(e) => {
             // Close if clicking outside the card
             if (e.target === e.currentTarget && status !== 'submitting') {
@@ -112,7 +112,7 @@ export default function FeedbackHub() {
           }}
         >
           <div
-            className="relative w-full max-w-lg bg-[#0e111c]/95 backdrop-blur-2xl border border-white/15 rounded-3xl p-6 sm:p-8 shadow-[0_25px_70px_rgba(0,0,0,0.85)] ring-1 ring-white/10 text-slate-100 transition-all duration-300 animate-[fade-slide-up_0.25s_ease-out]"
+            className="relative w-full max-w-lg bg-gradient-to-br from-[#1a1f4e]/92 via-[#1e1545]/92 to-[#2a1040]/92 backdrop-blur-2xl border border-white/20 rounded-3xl p-6 sm:p-8 shadow-[0_20px_60px_rgba(0,0,0,0.55),0_0_50px_rgba(6,182,212,0.18),0_0_80px_rgba(236,72,153,0.12)] ring-1 ring-cyan-400/15 text-slate-100 transition-all duration-300 animate-[modal-pop_0.3s_cubic-bezier(0.34,1.56,0.64,1)_both]"
           >
             {/* Close Button (X) */}
             <button
@@ -147,8 +147,8 @@ export default function FeedbackHub() {
               <form onSubmit={handleSubmit} className="flex flex-col">
                 {/* Header */}
                 <div className="mb-5 pr-8">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/90 border border-cyan-400/30 mb-2.5 shadow-sm">
-                    <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_6px_rgba(34,211,238,0.8)]"></span>
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-cyan-500/25 to-pink-500/20 border border-cyan-400/50 mb-2.5 shadow-[0_0_14px_rgba(34,211,238,0.3)]">
+                    <span className="w-2 h-2 rounded-full bg-cyan-300 animate-pulse shadow-[0_0_8px_rgba(34,211,238,0.9)]"></span>
                     <span className="text-[10px] font-bold tracking-widest uppercase text-cyan-200">
                       Community Hub
                     </span>
@@ -157,7 +157,7 @@ export default function FeedbackHub() {
                     id="feedback-hub-title"
                     className="font-baloo font-['Baloo_2',sans-serif] text-2xl sm:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-cyan-400 via-teal-300 to-pink-500 bg-clip-text text-transparent leading-snug"
                   >
-                    Feedback Hub
+                    💬 Feedback Hub
                   </h2>
                   <p className="mt-1 text-xs sm:text-sm text-slate-300/80 leading-relaxed">
                     "We actually read every feedback you send"
@@ -179,8 +179,8 @@ export default function FeedbackHub() {
                       setMessage(e.target.value)
                       if (errorText) setErrorText('')
                     }}
-                    placeholder={"Share with us:\n-What we can improve\n- What you liked or disliked\n- Any bugs or issues you found"}
-                    className="w-full p-4 rounded-2xl bg-slate-950/85 border border-white/15 text-slate-100 placeholder:text-slate-400/75 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/30 outline-none resize-none transition-all text-sm sm:text-base leading-relaxed disabled:opacity-50"
+                    placeholder={"Share with us:\n- What we can improve\n- What you liked or disliked\n- Any bugs or issues you found"}
+                    className="w-full p-4 rounded-2xl bg-white/8 border border-white/20 text-slate-100 placeholder:text-slate-300/65 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/40 focus:bg-white/12 outline-none resize-none transition-all text-sm sm:text-base leading-relaxed disabled:opacity-50"
                   />
                   {errorText && (
                     <p className="mt-2 text-xs font-semibold text-rose-400 flex items-center gap-1.5">
@@ -198,7 +198,7 @@ export default function FeedbackHub() {
                     type="button"
                     onClick={() => setIsOpen(false)}
                     disabled={status === 'submitting'}
-                    className="px-4 py-2.5 rounded-xl border border-white/10 hover:border-white/25 bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white text-sm font-semibold transition-all cursor-pointer disabled:opacity-40"
+                    className="px-4 py-2.5 rounded-xl border border-white/20 hover:border-cyan-400/40 bg-white/8 hover:bg-white/15 text-slate-200 hover:text-white text-sm font-semibold backdrop-blur-sm transition-all cursor-pointer disabled:opacity-40 shadow-[0_2px_8px_rgba(0,0,0,0.25)]"
                   >
                     Cancel
                   </button>
