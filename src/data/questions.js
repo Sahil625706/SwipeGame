@@ -350,11 +350,15 @@ export const questions = [
     optionAEnd: 379,
     optionAFillContainer: true,
     optionB: "Yasmin's Walk",
-    optionBImage: "https://www.youtube.com/embed/bCGx4a7TeMw?start=94&end=115&controls=1&loop=1&playlist=bCGx4a7TeMw",
+    optionBImage: "https://www.youtube.com/embed/bCGx4a7TeMw?start=94&end=116&controls=1&loop=1&playlist=bCGx4a7TeMw",
     optionBType: "youtube",
     optionBAspectRatio: "16/9",
     optionBStart: 94,
     optionBEnd: 116,
+    optionBSegments: [
+      { start: 94, end: 102 },
+      { start: 109, end: 116 },
+    ],
     optionBFillContainer: true
   },
   {
@@ -411,11 +415,15 @@ export const questions = [
   {
     id: 116,
     optionA: "Ibrahim's Bicycle Kick",
-    optionAImage: "https://www.youtube.com/embed/RDsxKXa0PbA?start=5&end=14&controls=1&loop=1&playlist=RDsxKXa0PbA",
+    optionAImage: "https://www.youtube.com/embed/RM_5tJncHww?start=5&end=58&controls=1&loop=1&playlist=RM_5tJncHww",
     optionAType: "youtube",
     optionAAspectRatio: "16/9",
     optionAStart: 5,
-    optionAEnd: 14,
+    optionAEnd: 58,
+    optionASegments: [
+      { start: 5, end: 17 },
+      { start: 49, end: 58 },
+    ],
     optionAFillContainer: true,
     optionB: "Roberto Carlos's Goal",
     optionBImage: "https://www.youtube.com/embed/crKwlbwvr88?start=16&end=26&controls=1&loop=1&playlist=crKwlbwvr88",

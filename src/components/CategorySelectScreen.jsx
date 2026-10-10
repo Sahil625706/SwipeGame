@@ -113,7 +113,13 @@ const CATEGORIES = [
     isSurvivor: true,
     getQuestions: () => foodQuestions,
     icon: (
-      <span className="text-2xl leading-none select-none" aria-hidden="true">🍕</span>
+      <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 21l-9-14.5a18.2 18.2 0 0118 0L12 21z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M4.8 9a15.2 15.2 0 0114.4 0" />
+        <circle cx="10" cy="13.5" r="1" fill="currentColor" />
+        <circle cx="14" cy="12.5" r="1" fill="currentColor" />
+        <circle cx="12" cy="16.5" r="1" fill="currentColor" />
+      </svg>
     ),
   },
 ]

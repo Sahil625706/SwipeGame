@@ -1,6 +1,48 @@
 import { useState, useRef, useEffect } from 'react'
 import { questions } from '../data/questions'
 import YouTubeEmbed from './YouTubeEmbed'
+import clickSoundUrl from '../assets/click.wav'
+import endSoundUrl from '../assets/end.mp3'
+
+// ── Audio effects — instantiated once and reused ──
+const clickAudio = typeof Audio !== 'undefined' ? new Audio(clickSoundUrl) : null
+const endAudio = typeof Audio !== 'undefined' ? new Audio(endSoundUrl) : null
+
+const STORAGE_KEY_MUTED = 'swipegame_click_sound_muted'
+
+function getInitialMutedState() {
+  try {
+    return localStorage.getItem(STORAGE_KEY_MUTED) === 'true'
+  } catch {
+    return false
+  }
+}
+
+function playClickSound(isMuted = false) {
+  if (isMuted || !clickAudio) return
+  try {
+    clickAudio.currentTime = 0
+    const playPromise = clickAudio.play()
+    if (playPromise && typeof playPromise.catch === 'function') {
+      playPromise.catch(() => {})
+    }
+  } catch {
+    // Autoplay or audio error ignored
+  }
+}
+
+function playEndSound(isMuted = false) {
+  if (isMuted || !endAudio) return
+  try {
+    endAudio.currentTime = 0
+    const playPromise = endAudio.play()
+    if (playPromise && typeof playPromise.catch === 'function') {
+      playPromise.catch(() => {})
+    }
+  } catch {
+    // Autoplay or audio error ignored
+  }
+}
 
 // ── Fisher-Yates shuffle (used only in Classic / Everything mode) ──
 function shuffleArray(arr) {
@@ -52,6 +94,24 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
   const categoryData = category?.getQuestions
     ? category.getQuestions()
     : questions.filter((q) => !q.excludeFromEverything)
+
+  // ── Audio mute toggle state (persisted in localStorage) ──
+  const [isMuted, setIsMuted] = useState(getInitialMutedState)
+  const isMutedRef = useRef(isMuted)
+  isMutedRef.current = isMuted
+
+  const toggleMute = () => {
+    setIsMuted((prev) => {
+      const next = !prev
+      isMutedRef.current = next
+      try {
+        localStorage.setItem(STORAGE_KEY_MUTED, String(next))
+      } catch {
+        // ignore storage error
+      }
+      return next
+    })
+  }
 
   // ── Check whether this category runs the Survivor-Bracket mechanic ──
   const isSurvivor = Boolean(
@@ -138,6 +198,7 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
     if (isCompleted && !confettiFiredRef.current) {
       confettiFiredRef.current = true
       launchConfetti(100)
+      playEndSound(isMutedRef.current)
       const secs = Math.round((Date.now() - startTimeRef.current) / 1000)
       setElapsedSecs(secs)
       const picks = pickTimesRef.current
@@ -157,6 +218,7 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
   // =========================================================================
   const handleSelectSurvivor = (winnerSide) => {
     if (isTransitioning || isSurvivorCompleted) return
+    playClickSound(isMutedRef.current)
     pickTimesRef.current.push(Date.now())
     setSelectedSide(winnerSide)
     setIsTransitioning(true)
@@ -207,6 +269,7 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
 
   const handleSelectClassic = (optionKey) => {
     if (isTransitioning) return
+    playClickSound(isMutedRef.current)
     pickTimesRef.current.push(Date.now())
     setSelectedOption(optionKey)
     setIsTransitioning(true)
@@ -306,6 +369,47 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
 
   return (
     <div className="relative min-h-screen text-slate-100 flex flex-col items-center justify-center px-4 py-8 sm:py-12 overflow-x-hidden selection:bg-pink-500 selection:text-white">
+      {/* ── Fixed Mute / Unmute Button (Active only during in-progress questions) ── */}
+      {!isCompleted && (
+        <button
+          type="button"
+          onClick={toggleMute}
+          aria-label={isMuted ? 'Unmute sound' : 'Mute sound'}
+          className="fixed top-4 right-14 sm:top-5 sm:right-[4.25rem] z-40 w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-slate-900/85 hover:bg-slate-800 text-slate-200 hover:text-white border border-white/20 hover:border-cyan-400/80 backdrop-blur-xl shadow-[0_4px_16px_rgba(0,0,0,0.5)] hover:shadow-[0_0_20px_rgba(6,182,212,0.4)] hover:scale-105 active:scale-95 flex items-center justify-center transition-all duration-200 cursor-pointer group"
+        >
+          {isMuted ? (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-slate-400 group-hover:text-rose-300 transition-colors"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M17.25 9.75L21.75 14.25m0-4.5L17.25 14.25M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.757 3.63 8.25 4.51 8.25H6.75z"
+              />
+            </svg>
+          ) : (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-slate-200 group-hover:text-cyan-300 transition-colors"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.757 3.63 8.25 4.51 8.25H6.75z"
+              />
+            </svg>
+          )}
+        </button>
+      )}
       {/* Split Background: #b91c1c Red (Left) & #1d4ed8 Blue (Right) at 100% Opacity */}
       <div
         className="fixed inset-0 pointer-events-none overflow-hidden z-0"
@@ -569,6 +673,7 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
                           hideTitleCover={hideTitleCover}
                           startTime={currentQuestion?.optionAStart}
                           endTime={currentQuestion?.optionAEnd}
+                          segments={currentQuestion?.optionASegments}
                           questionId={currentQuestion?.id}
                           optionKey="optionA"
                           fillContainer={fillContainer}
@@ -698,6 +803,7 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
                           hideTitleCover={hideTitleCover}
                           startTime={currentQuestion?.optionBStart}
                           endTime={currentQuestion?.optionBEnd}
+                          segments={currentQuestion?.optionBSegments}
                           questionId={currentQuestion?.id}
                           optionKey="optionB"
                           fillContainer={fillContainer}

@@ -70,6 +70,7 @@ export default function YouTubeEmbed({
   hideTitleCover,
   startTime,
   endTime,
+  segments,
   questionId,
   optionKey,
   fillContainer,
@@ -83,6 +84,26 @@ export default function YouTubeEmbed({
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentClipSec, setCurrentClipSec] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
+
+  // Determine effective playback segments (prop takes precedence, fallback for specific questions)
+  const effectiveSegments = useMemo(() => {
+    if (Array.isArray(segments) && segments.length > 0) {
+      return segments
+    }
+    if (Number(questionId) === 116 && optionKey === 'optionA') {
+      return [
+        { start: 5, end: 17 },
+        { start: 49, end: 58 },
+      ]
+    }
+    if (Number(questionId) === 112 && optionKey === 'optionB') {
+      return [
+        { start: 94, end: 102 },
+        { start: 109, end: 116 },
+      ]
+    }
+    return null
+  }, [segments, questionId, optionKey])
 
   // Extract video ID, start, end, and duration
   const { videoId, parsedStart, parsedEnd, clipDuration } = useMemo(() => {
@@ -105,9 +126,22 @@ export default function YouTubeEmbed({
       e = e ?? 0
     }
 
-    const startVal = Math.max(0, s || 0)
-    const endVal = Math.max(startVal, e || 0)
-    const durVal = Math.max(1, endVal - startVal)
+    let startVal = Math.max(0, s || 0)
+    let endVal = Math.max(startVal, e || 0)
+
+    if (effectiveSegments && effectiveSegments.length > 0) {
+      startVal = effectiveSegments[0].start
+      endVal = effectiveSegments[effectiveSegments.length - 1].end
+    }
+
+    let durVal = Math.max(1, endVal - startVal)
+    if (effectiveSegments && effectiveSegments.length > 0) {
+      durVal = effectiveSegments.reduce(
+        (sum, seg) => sum + Math.max(0, seg.end - seg.start),
+        0
+      )
+      durVal = Math.max(1, durVal)
+    }
 
     return {
       videoId: id,
@@ -115,7 +149,50 @@ export default function YouTubeEmbed({
       parsedEnd: endVal,
       clipDuration: durVal,
     }
-  }, [url, startTime, endTime])
+  }, [url, startTime, endTime, effectiveSegments])
+
+  // Map absolute video time to elapsed time inside played segments only
+  const getElapsedFromCurrentTime = useCallback(
+    (currentTime) => {
+      if (!effectiveSegments || effectiveSegments.length === 0) {
+        return Math.max(0, Math.min(clipDuration, currentTime - parsedStart))
+      }
+      let elapsed = 0
+      for (let i = 0; i < effectiveSegments.length; i++) {
+        const { start, end } = effectiveSegments[i]
+        const segDur = Math.max(0, end - start)
+        if (currentTime < start) {
+          return elapsed
+        } else if (currentTime <= end) {
+          return Math.min(clipDuration, elapsed + (currentTime - start))
+        } else {
+          elapsed += segDur
+        }
+      }
+      return Math.min(clipDuration, elapsed)
+    },
+    [effectiveSegments, clipDuration, parsedStart]
+  )
+
+  // Map elapsed played time (e.g. from seekbar) to absolute video time
+  const getTimeFromElapsed = useCallback(
+    (targetClipSec) => {
+      if (!effectiveSegments || effectiveSegments.length === 0) {
+        return parsedStart + targetClipSec
+      }
+      let remaining = Math.max(0, Math.min(clipDuration, targetClipSec))
+      for (let i = 0; i < effectiveSegments.length; i++) {
+        const { start, end } = effectiveSegments[i]
+        const segDur = Math.max(0, end - start)
+        if (remaining <= segDur || i === effectiveSegments.length - 1) {
+          return start + Math.min(segDur, remaining)
+        }
+        remaining -= segDur
+      }
+      return effectiveSegments[effectiveSegments.length - 1].end
+    },
+    [effectiveSegments, clipDuration, parsedStart]
+  )
 
   // Unique container ID guaranteed for every single player instance
   const uniquePlayerId = useMemo(() => {
@@ -216,14 +293,59 @@ export default function YouTubeEmbed({
                   if (isSeekingRef.current) return
 
                   const currentTime = player.getCurrentTime()
-                  const elapsedInClip = Math.max(0, Math.min(clipDuration, currentTime - parsedStart))
-                  setCurrentClipSec(elapsedInClip)
 
-                  // Strictly loop when reaching or passing end time
-                  if (parsedEnd > 0 && currentTime >= parsedEnd - 0.2) {
-                    loopBackToStart()
-                  } else if (parsedStart > 0 && currentTime < parsedStart - 1.5) {
-                    loopBackToStart()
+                  if (effectiveSegments && effectiveSegments.length > 0) {
+                    const firstSeg = effectiveSegments[0]
+                    const lastSeg = effectiveSegments[effectiveSegments.length - 1]
+
+                    // Loop if before first segment or after last segment
+                    if (firstSeg.start > 0 && currentTime < firstSeg.start - 1.5) {
+                      loopBackToStart()
+                      return
+                    }
+                    if (lastSeg.end > 0 && currentTime >= lastSeg.end - 0.2) {
+                      loopBackToStart()
+                      return
+                    }
+
+                    // Check for intermediate skips
+                    let didSkip = false
+                    for (let i = 0; i < effectiveSegments.length - 1; i++) {
+                      const curSeg = effectiveSegments[i]
+                      const nextSeg = effectiveSegments[i + 1]
+
+                      // When playback reaches current segment end or falls inside the skip gap
+                      if (currentTime >= curSeg.end - 0.15 && currentTime < nextSeg.start) {
+                        isSeekingRef.current = true
+                        try {
+                          if (typeof player.seekTo === 'function') {
+                            player.seekTo(nextSeg.start, true)
+                          }
+                          setCurrentClipSec(getElapsedFromCurrentTime(nextSeg.start))
+                        } catch (err) {
+                          console.warn('Error during segment skip:', err)
+                        }
+                        setTimeout(() => {
+                          isSeekingRef.current = false
+                        }, 300)
+                        didSkip = true
+                        break
+                      }
+                    }
+
+                    if (!didSkip) {
+                      setCurrentClipSec(getElapsedFromCurrentTime(currentTime))
+                    }
+                  } else {
+                    const elapsedInClip = Math.max(0, Math.min(clipDuration, currentTime - parsedStart))
+                    setCurrentClipSec(elapsedInClip)
+
+                    // Strictly loop when reaching or passing end time
+                    if (parsedEnd > 0 && currentTime >= parsedEnd - 0.2) {
+                      loopBackToStart()
+                    } else if (parsedStart > 0 && currentTime < parsedStart - 1.5) {
+                      loopBackToStart()
+                    }
                   }
                 }, 80)
               } else if (event.data === window.YT.PlayerState.ENDED) {
@@ -234,8 +356,7 @@ export default function YouTubeEmbed({
                 clearTracking()
                 if (playerRef.current && typeof playerRef.current.getCurrentTime === 'function') {
                   const currentTime = playerRef.current.getCurrentTime()
-                  const elapsedInClip = Math.max(0, Math.min(clipDuration, currentTime - parsedStart))
-                  setCurrentClipSec(elapsedInClip)
+                  setCurrentClipSec(getElapsedFromCurrentTime(currentTime))
                 }
               } else {
                 clearTracking()
@@ -252,7 +373,16 @@ export default function YouTubeEmbed({
       isCancelled = true
       cleanup()
     }
-  }, [uniquePlayerId, videoId, parsedStart, parsedEnd, clipDuration, loopBackToStart])
+  }, [
+    uniquePlayerId,
+    videoId,
+    parsedStart,
+    parsedEnd,
+    clipDuration,
+    loopBackToStart,
+    effectiveSegments,
+    getElapsedFromCurrentTime,
+  ])
 
   // Custom Small Play / Pause toggle
   const togglePlayPause = useCallback(
@@ -293,7 +423,7 @@ export default function YouTubeEmbed({
     [isPlaying, currentClipSec, clipDuration, parsedStart]
   )
 
-  // Custom Seek Handler: strictly bounded between 0% and 100% of the clip duration
+  // Custom Seek Handler: strictly bounded between 0% and 100% of the playable clip duration
   const applySeekFromEvent = useCallback(
     (e) => {
       if (!progressBarRef.current || !playerRef.current) return
@@ -306,7 +436,7 @@ export default function YouTubeEmbed({
           : 0
       const ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width))
       const targetClipSec = ratio * clipDuration
-      const targetAbsoluteSec = parsedStart + targetClipSec
+      const targetAbsoluteSec = getTimeFromElapsed(targetClipSec)
 
       isSeekingRef.current = true
       setCurrentClipSec(targetClipSec)
@@ -327,7 +457,7 @@ export default function YouTubeEmbed({
         isSeekingRef.current = false
       }, 250)
     },
-    [clipDuration, parsedStart, isPlaying]
+    [clipDuration, getTimeFromElapsed, isPlaying]
   )
 
   const handlePointerDown = (e) => {
