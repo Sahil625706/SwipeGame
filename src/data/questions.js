@@ -14,8 +14,6 @@ import img106 from '../assets/image copy 106.png'
 import img107 from '../assets/image copy 107.png'
 import img83 from '../assets/image copy 83.png'
 import img82 from '../assets/image copy 82.png'
-import img121 from '../assets/image copy 121.png'
-import img120 from '../assets/image copy 120.png'
 import img12 from '../assets/image copy 12.png'
 import img13 from '../assets/image copy 13.png'
 import img14 from '../assets/image copy 14.png'
@@ -112,8 +110,6 @@ import img112 from '../assets/image copy 112.png'
 import img113 from '../assets/image copy 113.png'
 import img128 from '../assets/image copy 128.png'
 import img129 from '../assets/image copy 129.png'
-import img130 from '../assets/image copy 130.png'
-import img131 from '../assets/image copy 131.png'
 import img132 from '../assets/image copy 132.png'
 import img133 from '../assets/image copy 133.png'
 import img134 from '../assets/image copy 134.png'
@@ -126,8 +122,6 @@ import img140 from '../assets/image copy 140.png'
 import img141 from '../assets/image copy 141.png'
 import img142 from '../assets/image copy 142.png'
 import img143 from '../assets/image copy 143.png'
-import img144 from '../assets/image copy 144.png'
-import img145 from '../assets/image copy 145.png'
 import img148 from '../assets/image copy 148.png'
 import img149 from '../assets/image copy 149.png'
 import img150 from '../assets/image copy 150.png'
@@ -200,8 +194,11 @@ import img415 from '../assets/image copy 415.png'
 import img416 from '../assets/image copy 416.png'
 import img417 from '../assets/image copy 417.png'
 import img418 from '../assets/image copy 418.png'
-import img62 from '../assets/image copy 62.png'
-import img63 from '../assets/image copy 63.png'
+import img460 from '../assets/image copy 460.png'
+import img461 from '../assets/image copy 461.png'
+import img463 from '../assets/image copy 463.png'
+import img464 from '../assets/image copy 464.png'
+
 
 export const questions = [
   { id: 1, optionA: "Control Mind", optionAImage: img11, optionB: "Control Animals", optionBImage: img10 },
@@ -212,9 +209,8 @@ export const questions = [
   { id: 6, optionA: "Dodge", optionAImage: img2, optionB: "Porsche", optionBImage: img3 },
   { id: 7, optionA: "Pull a lever to save 10 people but kill 1", optionAImage: img106, optionB: "Do nothing and let 10 people die", optionBImage: img107 },
   { id: 9, optionA: "Lamborghini V12 Vision Gran Turismo", optionAImage: img83, optionB: "Mercedes-Benz Concept Car", optionBImage: img82 },
-  { id: 10, optionA: "Salman Khan is more Iconic?", optionAImage: img121, optionB: "Shahrukh Khan is more Iconic?", optionBImage: img120 },
   { id: 11, optionA: "Water/Aqua park", optionAImage: img12, optionB: "Theme park", optionBImage: img13 },
-  { id: 12, optionA: "Koenigsegg", optionAImage: img14, optionB: "McLaren", optionBImage: img15, category: "cars" },
+  { id: 12, optionA: "Koenigsegg", optionAImage: img14, optionB: "McLaren", optionBImage: img15 },
   { id: 13, optionA: "Live in New York", optionAImage: img17, optionB: "Live in London", optionBImage: img16 },
   { id: 14, optionA: "Enjoy watching Squid Game", optionAImage: img18, optionB: "Enjoy watching Stranger Things", optionBImage: img19 },
   { id: 15, optionA: "Tom Cruise has the Ultimate Face Card?", optionAImage: img81, optionB: "Johnny Depp has the Ultimate Face Card?", optionBImage: img80 },
@@ -222,7 +218,7 @@ export const questions = [
   { id: 17, optionA: "Megan Fox is Unforgettable?", optionAImage: img56, optionB: "Adriana Lima is Unforgettable?", optionBImage: img57 },
   { id: 18, optionA: "Be the happiest person alive with a simple life", optionAImage: img22, optionB: "Be the richest person but constantly stressed", optionBImage: img23 },
   { id: 19, optionA: "Always know when someone is lying to you", optionAImage: img25, optionB: "Be able to lie perfectly without ever being caught", optionBImage: img24 },
-  { id: 20, optionA: "Timothee Chalamet", optionAImage: img84, optionB: "Andrew Garfield", optionBImage: img85 },
+  { id: 20, optionA: "Timothee Chalamet is your favourite", optionAImage: img84, optionB: "Andrew Garfield is your favourite", optionBImage: img85 },
   { id: 21, optionA: "Iron Man Suit", optionAImage: img75, optionB: "Ability like Superman", optionBImage: img74 },
   { id: 22, optionA: "Scarlett Johansson steals the Spotlight?", optionAImage: img55, optionB: "Jennifer Lawrence steals the Spotlight?", optionBImage: img54 },
   { id: 23, optionA: "Bugatti", optionAImage: img65, optionB: "Rolls Royce", optionBImage: img66 },
@@ -241,7 +237,6 @@ export const questions = [
   { id: 36, optionA: "Morning workout", optionAImage: img42, optionB: "Evening workout", optionBImage: img43 },
   { id: 37, optionA: "Be the Smartest person in the room", optionAImage: img44, optionB: "Be the Funniest person in the room", optionBImage: img45 },
   { id: 38, optionA: "Mercedes has more Aura", optionAImage: img67, optionB: "BMW has more Aura", optionBImage: img68 },
-  { id: 39, optionA: "Have a pet Sea Serpent", optionAImage: img62, optionB: "Have a pet Dragon", optionBImage: img63 },
   { id: 40, optionA: "Sunny Leone is more Prettier?", optionAImage: img71, optionB: "Kate Upton is more Prettier?", optionBImage: img70 },
   { id: 41, optionA: "Breakfast hits different", optionAImage: img48, optionB: "Dinner hits different", optionBImage: img49 },
   { id: 42, optionA: "Fight 6 Zombies", optionAImage: img50, optionB: "Fight 1 Vampire", optionBImage: img51 },
@@ -261,21 +256,20 @@ export const questions = [
   { id: 56, optionA: "Have 1 pet Lion", optionAImage: img114, optionB: "Have 3 pet Wolves", optionBImage: img115 },
   { id: 57, optionA: "Disha Patani is more Good Looking", optionAImage: img124, optionB: "Tamannaah Bhatia is more Good Looking", optionBImage: img125 },
   { id: 58, optionA: "Have a peaceful nature view", optionAImage: img112, optionB: "Have a modern city skyline view", optionBImage: img113 },
+  { id: 59, optionA: "Have a pet Sea Serpent", optionAImage: img463, optionB: "Have a pet Dragon", optionBImage: img464 },
   { id: 60, optionA: "Have the Omnitrix like Ben 10", optionAImage: img128, optionB: "Have your own Pokemon Team", optionBImage: img129 },
-  { id: 61, optionA: "Jennifer Connelly wins the Beauty Round?", optionAImage: img130, optionB: "Jessica Alba wins the Beauty Round?", optionBImage: img131 },
   { id: 62, optionA: "Be a Professional Footballer", optionAImage: img132, optionB: "Be a World-Famous Actor", optionBImage: img133 },
   { id: 63, optionA: "Wield a Lightsaber like in Star Wars", optionAImage: img135, optionB: "Use a Powerful Bow and Arrow", optionBImage: img134 },
   { id: 64, optionA: "Captain America Lifting Mjolnir is more Iconic", optionAImage: img136, optionB: "Iron Man's Snap is more Iconic", optionBImage: img137 },
   { id: 65, optionA: "Eat Fries", optionAImage: img138, optionB: "Eat Chicken Nuggets", optionBImage: img139 },
   { id: 66, optionA: "We are alone in the whole Universe", optionAImage: img141, optionB: "Life exists out there", optionBImage: img140 },
   { id: 67, optionA: "Travel to every other country on Earth", optionAImage: img142, optionB: "Experience Space once", optionBImage: img143 },
-  { id: 68, optionA: "Deepika Padukone looks Better", optionAImage: img144, optionB: "Alia Bhatt looks Better", optionBImage: img145 },
   { id: 69, optionA: "Work 14 hours a day for your own Business", optionAImage: img148, optionB: "Work 3 hours a day for someone Else with decent pay", optionBImage: img149 },
   { id: 70, optionA: "Earn $900/month doing something you Enjoy", optionAImage: img150, optionB: "Earn $1,900/month doing something you Don't Enjoy", optionBImage: img151 },
   { id: 71, optionA: "Angelina Jolie catches your eye more?", optionAImage: img154, optionB: "Kate Winslet catches your eye more?", optionBImage: img155 },
   { id: 72, optionA: "Tobey Maguire as Spider-Man", optionAImage: img156, optionB: "Tom Holland as Spider-Man", optionBImage: img157 },
   { id: 73, optionA: "Score a long-range Football goal", optionAImage: img158, optionB: "Shoot a long-distance Basketball shot", optionBImage: img159 },
-  { id: 74, optionA: "Rock", optionAImage: img160, optionB: "Brock Lesner", optionBImage: img161 },
+  { id: 74, optionA: "Rock is your Favourite", optionAImage: img160, optionB: "Brock Lesner is your Favourite", optionBImage: img161 },
   { id: 75, optionA: "Michael B. Jordan", optionAImage: img162, optionB: "Will Smith", optionBImage: img163, category: "actor" },
   { id: 76, optionA: "Stephen Curry", optionAImage: img164, optionB: "Lebron James", optionBImage: img165 },
   { id: 77, optionA: "Ronaldo is G.O.A.T", optionAImage: img167, optionB: "Messi is G.O.A.T", optionBImage: img166 },
@@ -291,7 +285,7 @@ export const questions = [
   { id: 92, optionA: "Invent a device that translates a Baby's cries into exact needs?", optionAImage: img192, optionB: "Invent a way to understand exactly what your Pet is trying to tell you?", optionBImage: img193 },
   { id: 93, optionA: "Have Peacock as your pet?", optionAImage: img194, optionB: "Have Dolphin as your pet?", optionBImage: img195 },
   { id: 94, optionA: "College Life?", optionAImage: img190, optionB: "School Life?", optionBImage: img191 },
-  { id: 95, optionA: "Win 1 Olympic Gold Medal", optionAImage: img197, optionB: "Win 4 Olympic Silver Medals", optionBImage: img196 },
+  { id: 95, optionA: "Win 1 Olympic Gold Medal", optionAImage: img196, optionB: "Win 4 Olympic Silver Medals", optionBImage: img197 },
   { id: 96, optionA: "Would you rather race in Supercar event", optionAImage: img198, optionB: "Would you rather race in Formula 1 event", optionBImage: img199 },
   { id: 97, optionA: "Drive Formula 1 car", optionAImage: img200, optionB: "Drive Lamborghini", optionBImage: img201 },
   { id: 98, optionA: "Rule the streets with multiple Batmobiles?", optionAImage: img203, optionB: "Dominate the skies with a Fighter Jet?", optionBImage: img202 },
@@ -306,6 +300,8 @@ export const questions = [
   { id: 107, optionA: "Go on a date with your crush", optionAImage: img413, optionB: "Be Friends with your idol or favourite celebrity for life", optionBImage: img414 },
   { id: 108, optionA: "Know who secretly likes you", optionAImage: img416, optionB: "Know who secretly hates or is jealous of you", optionBImage: img415 },
   { id: 109, optionA: "Survive 3 hyenas", optionAImage: img417, optionB: "Survive 1 Tiger", optionBImage: img418 },
+  { id: 120, optionA: "Be able to Surf a massive wave", optionAImage: img460, optionB: "Be able to Cliff Dive from a massive height", optionBImage: img461 },
+
   {
     id: 110,
     optionA: "Maya's Tree Dance",
@@ -350,61 +346,24 @@ export const questions = [
     optionAEnd: 379,
     optionAFillContainer: true,
     optionB: "Yasmin's Walk",
-    optionBImage: "https://www.youtube.com/embed/bCGx4a7TeMw?start=94&end=116&controls=1&loop=1&playlist=bCGx4a7TeMw",
+    optionBImage: "https://www.youtube.com/embed/bCGx4a7TeMw?start=94&end=115&controls=1&loop=1&playlist=bCGx4a7TeMw",
     optionBType: "youtube",
     optionBAspectRatio: "16/9",
     optionBStart: 94,
     optionBEnd: 116,
-    optionBSegments: [
-      { start: 94, end: 102 },
-      { start: 109, end: 116 },
-    ],
     optionBFillContainer: true
   },
-  {
-    id: 113,
-    optionA: "Gymnastic Vault",
-    optionAImage: "https://www.youtube.com/embed/yKpCi871Yls?start=33&end=47&controls=1&loop=1&playlist=yKpCi871Yls",
-    optionAType: "youtube",
-    optionAAspectRatio: "16/9",
-    optionAStart: 33,
-    optionAEnd: 47,
-    optionAFillContainer: true,
-    optionB: "Cliff Diving",
-    optionBImage: "https://www.youtube.com/embed/V55DRE9vJSs?start=65&end=72&controls=1&loop=1&playlist=V55DRE9vJSs",
-    optionBType: "youtube",
-    optionBAspectRatio: "16/9",
-    optionBStart: 65,
-    optionBEnd: 73,
-    optionBFillContainer: true
-  },
-  {
-    id: 114,
-    optionA: "Basketball move",
-    optionAImage: "https://www.youtube.com/embed/eOrzH0kmegw?start=887&end=908&controls=1&loop=1&playlist=eOrzH0kmegw",
-    optionAType: "youtube",
-    optionAAspectRatio: "16/9",
-    optionAStart: 887,
-    optionAEnd: 910,
-    optionAFillContainer: true,
-    optionB: "Basketball move",
-    optionBImage: "https://www.youtube.com/embed/eOrzH0kmegw?start=1058&end=1076&controls=1&loop=1&playlist=eOrzH0kmegw",
-    optionBType: "youtube",
-    optionBAspectRatio: "16/9",
-    optionBStart: 1058,
-    optionBEnd: 1078,
-    optionBFillContainer: true
-  },
+
   {
     id: 115,
-    optionA: "Basketball move",
+    optionA: "This moment felt more insane?",
     optionAImage: "https://www.youtube.com/embed/eOrzH0kmegw?start=275&end=291&controls=1&loop=1&playlist=eOrzH0kmegw",
     optionAType: "youtube",
     optionAAspectRatio: "16/9",
     optionAStart: 275,
     optionAEnd: 292,
     optionAFillContainer: true,
-    optionB: "Basketball move",
+    optionB: "This moment felt more insane?",
     optionBImage: "https://www.youtube.com/embed/eOrzH0kmegw?start=292&end=310&controls=1&loop=1&playlist=eOrzH0kmegw",
     optionBType: "youtube",
     optionBAspectRatio: "16/9",
@@ -415,15 +374,11 @@ export const questions = [
   {
     id: 116,
     optionA: "Ibrahim's Bicycle Kick",
-    optionAImage: "https://www.youtube.com/embed/RM_5tJncHww?start=5&end=58&controls=1&loop=1&playlist=RM_5tJncHww",
+    optionAImage: "https://www.youtube.com/embed/RDsxKXa0PbA?start=5&end=14&controls=1&loop=1&playlist=RDsxKXa0PbA",
     optionAType: "youtube",
     optionAAspectRatio: "16/9",
     optionAStart: 5,
-    optionAEnd: 58,
-    optionASegments: [
-      { start: 5, end: 17 },
-      { start: 49, end: 58 },
-    ],
+    optionAEnd: 14,
     optionAFillContainer: true,
     optionB: "Roberto Carlos's Goal",
     optionBImage: "https://www.youtube.com/embed/crKwlbwvr88?start=16&end=26&controls=1&loop=1&playlist=crKwlbwvr88",

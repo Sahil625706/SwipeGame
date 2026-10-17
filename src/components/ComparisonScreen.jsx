@@ -56,31 +56,41 @@ function shuffleArray(arr) {
 
 // ── Confetti burst — pure JS DOM particles, no external libraries ──
 const CONFETTI_COLORS = [
-  '#22d3ee', '#f472b6', '#a78bfa', '#34d399',
-  '#fbbf24', '#60a5fa', '#f87171', '#4ade80',
+  '#fbbf24', '#f59e0b', '#fde68a',   // gold
+  '#22d3ee', '#06b6d4', '#67e8f9',   // cyan
+  '#f472b6', '#ec4899', '#f9a8d4',   // pink
+  '#a78bfa', '#8b5cf6', '#c4b5fd',   // purple
+  '#34d399', '#6ee7b7',              // teal
 ]
-function launchConfetti(count = 95) {
-  for (let i = 0; i < count; i++) {
-    const el = document.createElement('div')
-    el.className = 'confetti-particle'
-    const size = 7 + Math.random() * 9
-    const isCircle = Math.random() > 0.5
-    el.style.cssText = [
-      `width:${size}px`,
-      `height:${isCircle ? size : size * 2.2}px`,
-      `left:${5 + Math.random() * 90}vw`,
-      `background:${CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)]}`,
-      `animation-duration:${1.6 + Math.random() * 2.2}s`,
-      `animation-delay:${Math.random() * 0.9}s`,
-      `border-radius:${isCircle ? '50%' : '3px'}`,
-      'opacity:1',
-    ].join(';')
-    document.body.appendChild(el)
-    const totalMs =
-      (parseFloat(el.style.animationDuration) +
-        parseFloat(el.style.animationDelay)) * 1000
-    setTimeout(() => el.remove(), totalMs + 200)
+function launchConfetti(count = 140) {
+  // Two waves: left-side burst and right-side burst
+  const spawnWave = (startX, spreadX, delay) => {
+    const waveCount = Math.floor(count / 2)
+    for (let i = 0; i < waveCount; i++) {
+      const el = document.createElement('div')
+      el.className = 'confetti-particle'
+      const size = 8 + Math.random() * 10
+      const isCircle = Math.random() > 0.45
+      const dur = 2.2 + Math.random() * 1.8
+      const del = delay + Math.random() * 0.5
+      el.style.cssText = [
+        `width:${size}px`,
+        `height:${isCircle ? size : size * 2.4}px`,
+        `left:${startX + Math.random() * spreadX}vw`,
+        `background:${CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)]}`,
+        `animation-duration:${dur}s`,
+        `animation-delay:${del}s`,
+        `border-radius:${isCircle ? '50%' : '3px'}`,
+        'opacity:1',
+      ].join(';')
+      document.body.appendChild(el)
+      setTimeout(() => el.remove(), (dur + del) * 1000 + 300)
+    }
   }
+  spawnWave(0, 20, 0)       // left side, immediate
+  spawnWave(80, 20, 0)      // right side, immediate
+  spawnWave(5, 15, 0.6)     // left, slight delay
+  spawnWave(78, 17, 0.6)    // right, slight delay
 }
 
 // ── Format elapsed seconds → "Xm Ys" or "Xs" ──
@@ -127,6 +137,7 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
   const [elapsedSecs, setElapsedSecs] = useState(0)
   const [fastestIdx, setFastestIdx] = useState(null)
   const [shareLabel, setShareLabel] = useState('Share Results')
+  const [shareLinkLabel, setShareLinkLabel] = useState('Share')
 
   // =========================================================================
   // ── SURVIVOR BRACKET STATE ──
@@ -358,6 +369,17 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
       .catch(() => { setShareLabel('Copy failed'); setTimeout(() => setShareLabel('Share Results'), 2000) })
   }
 
+  const handleShareLink = () => {
+    const url = window.location.href
+    if (navigator.share) {
+      navigator.share({ title: 'SwipeGame', url }).catch(() => {})
+    } else {
+      navigator.clipboard.writeText(url)
+        .then(() => { setShareLinkLabel('Link copied! ✓'); setTimeout(() => setShareLinkLabel('Share'), 2500) })
+        .catch(() => { setShareLinkLabel('Copy failed'); setTimeout(() => setShareLinkLabel('Share'), 2000) })
+    }
+  }
+
   // ── Progress calculations ──
   const totalBattles = isSurvivor ? Math.max(1, survivorPool.length - 1) : shuffledQuestions.length
   const currentBattle = isSurvivor
@@ -435,122 +457,216 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
           <h1 className="font-baloo font-['Baloo_2',sans-serif] text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-none bg-gradient-to-r from-cyan-400 via-teal-300 to-pink-500 bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(6,182,212,0.3)]">
             SwipeGame
           </h1>
-          <p className="mt-2 text-sm sm:text-base text-slate-300/90 font-medium tracking-wide max-w-md">
-            {isSurvivor
-              ? 'Survivor Bracket: Winner stays, loser gets replaced!'
-              : 'This or That? Pick your ultimate favorite!'}
-          </p>
+          {!(isCompleted && isSurvivor) && (
+            <p className="mt-2 text-sm sm:text-base text-slate-300/90 font-medium tracking-wide max-w-md">
+              {isSurvivor
+                ? 'Survivor Bracket: Winner stays, loser gets replaced!'
+                : 'This or That? Pick your ultimate favorite!'}
+            </p>
+          )}
         </header>
 
         {isCompleted ? (
           /* ════════════ GAME COMPLETED / CHAMPION STATE ════════════ */
-          <div
-            className="w-full max-w-lg text-center"
-            style={{ animation: 'fade-slide-up 0.55s ease both' }}
-          >
-            <div className="bg-white/5 backdrop-blur-2xl border border-white/15 rounded-3xl p-6 sm:p-10 shadow-[0_24px_70px_rgba(0,0,0,0.75)] ring-1 ring-white/5">
-
-              {isSurvivor && champion ? (
-                /* ─── SURVIVOR CHAMPION DISPLAY ─── */
-                <div className="flex flex-col items-center">
-                  <div className="icon-pop glow-pulse w-20 h-20 rounded-2xl mb-4 flex items-center justify-center bg-gradient-to-tr from-amber-500/30 via-yellow-400/25 to-pink-500/25 border border-yellow-400/40 text-yellow-300 text-4xl shadow-[0_0_30px_rgba(251,191,36,0.4)]">
-                    👑
-                  </div>
-
-                  <div className="inline-block px-4 py-1 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-300 text-xs font-black tracking-widest uppercase mb-3 shadow-[0_0_12px_rgba(251,191,36,0.3)]">
-                    Ultimate Champion
-                  </div>
-
-                  <h2 className="font-baloo font-['Baloo_2',sans-serif] text-3xl sm:text-4xl font-extrabold tracking-tight leading-tight text-white mb-5">
-                    {champion.name}
-                  </h2>
-
-                  {/* Champion Image Card */}
-                  <div className="relative w-full max-w-xs aspect-[4/3] rounded-2xl overflow-hidden border-2 border-amber-400/60 shadow-[0_0_40px_rgba(251,191,36,0.35)] bg-[#0a0b12] mb-6 p-2 ring-2 ring-yellow-400/20">
-                    <img
-                      src={champion.image}
-                      alt={champion.name}
-                      className="w-full h-full object-contain drop-shadow-[0_8px_20px_rgba(0,0,0,0.8)]"
-                    />
-                  </div>
-
-                  <p className="text-slate-300/90 text-sm sm:text-base mb-6 font-medium">
-                    Survived <span className="text-amber-300 font-bold">{totalBattles} face-offs</span> to claim the crown in <span className="text-cyan-300 font-bold">{category?.title}</span>!
-                  </p>
-                </div>
-              ) : (
-                /* ─── CLASSIC COMPLETED DISPLAY ─── */
-                <div>
-                  <div className="icon-pop glow-pulse w-20 h-20 rounded-2xl mx-auto mb-5 flex items-center justify-center bg-gradient-to-tr from-cyan-500/25 to-pink-500/25 border border-white/20 text-cyan-300">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-
-                  <h2 className="font-baloo font-['Baloo_2',sans-serif] text-4xl sm:text-5xl font-extrabold tracking-tight leading-none bg-gradient-to-r from-cyan-400 via-teal-300 to-pink-500 bg-clip-text text-transparent mb-3">
-                    You're all done!
-                  </h2>
-                  <p className="text-slate-300/80 text-sm sm:text-base mb-6">
-                    You powered through all <span className="text-pink-400 font-bold">{shuffledQuestions.length}</span> {shuffledQuestions.length === 1 ? 'comparison' : 'comparisons'}. Impressive!
-                  </p>
-                </div>
-              )}
-
-              {/* Stats row */}
-              <div className="grid grid-cols-2 gap-3 mb-8">
-                <div className="bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-md">
-                  <p className="text-xs font-semibold tracking-widest uppercase text-cyan-300/80 mb-1">Total time</p>
-                  <p className="text-2xl font-extrabold text-white">{formatTime(elapsedSecs)}</p>
-                </div>
-                <div className="bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-md">
-                  <p className="text-xs font-semibold tracking-widest uppercase text-pink-300/80 mb-1">
-                    {isSurvivor ? 'Contenders' : 'Fastest pick'}
-                  </p>
-                  <p className="text-2xl font-extrabold text-white">
-                    {isSurvivor ? survivorPool.length : (fastestIdx !== null ? `Q${fastestIdx + 1}` : '—')}
-                  </p>
-                </div>
+          isSurvivor && champion ? (
+            /* ─── SURVIVOR CHAMPION DISPLAY ─── */
+            <div
+              className="w-full max-w-xl text-center"
+              style={{ animation: 'modal-pop 0.5s cubic-bezier(0.34,1.56,0.64,1) both' }}
+            >
+              {/* Radial spotlight glow behind card */}
+              <div className="absolute inset-0 pointer-events-none z-0 flex items-center justify-center">
+                <div style={{
+                  width: '520px',
+                  height: '520px',
+                  background: 'radial-gradient(ellipse at center, rgba(251,191,36,0.18) 0%, rgba(236,72,153,0.10) 45%, transparent 70%)',
+                  borderRadius: '50%',
+                  filter: 'blur(30px)',
+                }} />
               </div>
 
-              {/* Action buttons */}
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                {/* Play Again */}
-                <button
-                  onClick={handleRestart}
-                  className="group inline-flex items-center justify-center gap-2 px-6 py-3 text-base font-bold text-white rounded-2xl cursor-pointer bg-gradient-to-r from-cyan-500 via-teal-500 to-pink-500 border border-white/20 shadow-[0_6px_25px_rgba(6,182,212,0.4)] hover:shadow-[0_10px_40px_rgba(236,72,153,0.65)] hover:scale-[1.05] hover:brightness-110 active:scale-95 transition-all duration-200"
-                >
-                  <span>Play Again</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 transition-transform duration-300 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                  </svg>
-                </button>
+              {/* Rich glass card */}
+              <div className="relative z-10 bg-gradient-to-br from-[#1a1c3d]/95 via-[#1e1040]/95 to-[#251025]/95 backdrop-blur-2xl border border-amber-400/35 rounded-3xl px-6 py-6 sm:px-8 sm:py-8 shadow-[0_24px_70px_rgba(0,0,0,0.7),0_0_60px_rgba(251,191,36,0.18)] ring-1 ring-amber-400/10">
 
-                {/* Home Button */}
-                {onBackToCategories && (
+                {/* Crown */}
+                <div
+                  className="text-6xl sm:text-7xl mb-2 select-none"
+                  style={{ animation: 'crown-drop 0.6s cubic-bezier(0.34,1.56,0.64,1) both, crown-float 3s ease-in-out 0.7s infinite' }}
+                >
+                  👑
+                </div>
+
+                {/* ULTIMATE CHAMPION badge */}
+                <div
+                  className="relative inline-block overflow-hidden px-5 py-1.5 rounded-full border border-amber-400/50 mb-3"
+                  style={{ background: 'linear-gradient(90deg, rgba(251,191,36,0.25), rgba(245,158,11,0.30), rgba(251,191,36,0.25))' }}
+                >
+                  {/* Shimmer sweep */}
+                  <div className="absolute inset-0 pointer-events-none" style={{ animation: 'shimmer-sweep 2.4s linear 0.8s infinite', background: 'linear-gradient(100deg, transparent 30%, rgba(255,255,255,0.25) 50%, transparent 70%)', backgroundSize: '200% 100%' }} />
+                  <span className="relative text-[11px] sm:text-xs font-black tracking-widest uppercase" style={{ background: 'linear-gradient(90deg,#fde68a,#fbbf24,#f59e0b,#fde68a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                    Ultimate Champion
+                  </span>
+                </div>
+
+                {/* Champion name */}
+                <h2
+                  className="font-baloo font-['Baloo_2',sans-serif] text-3xl sm:text-4xl font-extrabold tracking-tight leading-tight mb-4"
+                  style={{ background: 'linear-gradient(135deg,#fde68a 0%,#fbbf24 40%,#ffffff 70%,#fde68a 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
+                >
+                  {champion.name}
+                </h2>
+
+                {/* Champion image — no letterbox, blurred bg fill */}
+                <div
+                  className="relative w-full max-w-xs mx-auto rounded-2xl overflow-hidden mb-4"
+                  style={{
+                    border: '2px solid rgba(251,191,36,0.55)',
+                    boxShadow: '0 0 0 4px rgba(251,191,36,0.12), 0 0 50px rgba(251,191,36,0.35)',
+                    animation: 'modal-pop 0.6s cubic-bezier(0.34,1.56,0.64,1) 0.15s both',
+                  }}
+                >
+                  {/* Blurred background fill */}
+                  <img
+                    src={champion.image}
+                    alt=""
+                    aria-hidden="true"
+                    className="absolute inset-0 w-full h-full object-cover scale-110"
+                    style={{ filter: 'blur(14px) brightness(0.55)', transform: 'scale(1.15)' }}
+                  />
+                  {/* Foreground image — natural aspect ratio */}
+                  <img
+                    src={champion.image}
+                    alt={champion.name}
+                    className="relative w-full h-auto object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.7)]"
+                  />
+                </div>
+
+                {/* Stat line */}
+                <p className="text-slate-300/85 text-sm sm:text-base mb-5 font-medium">
+                  Crowned champion out of{' '}
+                  <span className="text-amber-300 font-bold">{survivorPool.length} contenders</span>
+                </p>
+
+                {/* Stats row */}
+                <div className="grid grid-cols-2 gap-3 mb-5">
+                  <div className="bg-white/5 border border-amber-400/15 rounded-2xl p-3 backdrop-blur-md">
+                    <p className="text-[10px] font-semibold tracking-widest uppercase text-amber-300/70 mb-0.5">Total time</p>
+                    <p className="text-xl font-extrabold text-white">{formatTime(elapsedSecs)}</p>
+                  </div>
+                  <div className="bg-white/5 border border-amber-400/15 rounded-2xl p-3 backdrop-blur-md">
+                    <p className="text-[10px] font-semibold tracking-widest uppercase text-amber-300/70 mb-0.5">Face-offs</p>
+                    <p className="text-xl font-extrabold text-white">{totalBattles}</p>
+                  </div>
+                </div>
+
+                {/* Action buttons */}
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                  {/* Play Again — primary */}
                   <button
-                    onClick={onBackToCategories}
-                    className="group inline-flex items-center justify-center gap-2 px-6 py-3 text-base font-bold rounded-2xl cursor-pointer bg-white/8 backdrop-blur-md border border-white/20 text-slate-200 hover:bg-white/15 hover:border-cyan-400/40 hover:text-white hover:shadow-[0_8px_30px_rgba(6,182,212,0.2)] hover:scale-[1.03] active:scale-95 transition-all duration-200"
+                    onClick={handleRestart}
+                    className="group inline-flex items-center justify-center gap-2 px-6 py-3 text-base font-bold text-white rounded-2xl cursor-pointer bg-indigo-600 border border-indigo-400/30 shadow-[0_4px_16px_rgba(99,102,241,0.35)] hover:bg-indigo-500 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(99,102,241,0.45)] active:scale-95 active:translate-y-0 transition-all duration-200"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 transition-transform duration-300 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                     </svg>
-                    <span>Home</span>
+                    <span>Play Again</span>
                   </button>
-                )}
 
-                {/* Share */}
-                <button
-                  onClick={handleShare}
-                  className="group inline-flex items-center justify-center gap-2 px-6 py-3 text-base font-bold rounded-2xl cursor-pointer bg-white/8 backdrop-blur-md border border-white/20 text-slate-200 hover:bg-white/15 hover:border-white/35 hover:text-white hover:shadow-[0_8px_30px_rgba(255,255,255,0.12)] hover:scale-[1.03] active:scale-95 transition-all duration-200"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-                  </svg>
-                  <span>{shareLabel}</span>
-                </button>
+                  {/* Choose Another Mode */}
+                  {onBackToCategories && (
+                    <button
+                      onClick={onBackToCategories}
+                      className="group inline-flex items-center justify-center gap-2 px-6 py-3 text-base font-bold rounded-2xl cursor-pointer bg-white/8 backdrop-blur-md border border-white/20 text-slate-200 hover:bg-white/15 hover:border-amber-400/40 hover:text-white hover:shadow-[0_8px_30px_rgba(251,191,36,0.2)] hover:scale-[1.03] active:scale-95 transition-all duration-200"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-amber-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                      </svg>
+                      <span>Home</span>
+                    </button>
+                  )}
+
+                  {/* Share link */}
+                  <button
+                    onClick={handleShareLink}
+                    className="group inline-flex items-center justify-center gap-2 px-6 py-3 text-base font-bold rounded-2xl cursor-pointer bg-white/8 backdrop-blur-md border border-white/20 text-slate-200 hover:bg-white/15 hover:border-white/35 hover:text-white hover:shadow-[0_8px_30px_rgba(255,255,255,0.12)] hover:scale-[1.03] active:scale-95 transition-all duration-200"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                    </svg>
+                    <span>{shareLinkLabel}</span>
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
+          ) : (
+            /* ─── CLASSIC / "You're all done" DISPLAY ─── */
+            <div
+              className="w-full max-w-lg text-center"
+              style={{ animation: 'fade-slide-up 0.55s ease both' }}
+            >
+              <div className="bg-white/5 backdrop-blur-2xl border border-white/15 rounded-3xl p-6 sm:p-10 shadow-[0_24px_70px_rgba(0,0,0,0.75)] ring-1 ring-white/5">
+                <div className="icon-pop glow-pulse w-20 h-20 rounded-2xl mx-auto mb-5 flex items-center justify-center bg-gradient-to-tr from-cyan-500/25 to-pink-500/25 border border-white/20 text-cyan-300">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+
+                <h2 className="font-baloo font-['Baloo_2',sans-serif] text-4xl sm:text-5xl font-extrabold tracking-tight leading-none bg-gradient-to-r from-cyan-400 via-teal-300 to-pink-500 bg-clip-text text-transparent mb-3">
+                  You're all done!
+                </h2>
+                <p className="text-slate-300/80 text-sm sm:text-base mb-6">
+                  You powered through all <span className="text-pink-400 font-bold">{shuffledQuestions.length}</span> {shuffledQuestions.length === 1 ? 'comparison' : 'comparisons'}. Impressive!
+                </p>
+
+                {/* Stats row */}
+                <div className="grid grid-cols-2 gap-3 mb-8">
+                  <div className="bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-md">
+                    <p className="text-xs font-semibold tracking-widest uppercase text-cyan-300/80 mb-1">Total time</p>
+                    <p className="text-2xl font-extrabold text-white">{formatTime(elapsedSecs)}</p>
+                  </div>
+                  <div className="bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-md">
+                    <p className="text-xs font-semibold tracking-widest uppercase text-pink-300/80 mb-1">Fastest pick</p>
+                    <p className="text-2xl font-extrabold text-white">{fastestIdx !== null ? `Q${fastestIdx + 1}` : '—'}</p>
+                  </div>
+                </div>
+
+                {/* Action buttons */}
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                  <button
+                    onClick={handleRestart}
+                    className="group inline-flex items-center justify-center gap-2 px-6 py-3 text-base font-bold text-white rounded-2xl cursor-pointer bg-gradient-to-r from-cyan-500 via-teal-500 to-pink-500 border border-white/20 shadow-[0_6px_25px_rgba(6,182,212,0.4)] hover:shadow-[0_10px_40px_rgba(236,72,153,0.65)] hover:scale-[1.05] hover:brightness-110 active:scale-95 transition-all duration-200"
+                  >
+                    <span>Play Again</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 transition-transform duration-300 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                  </button>
+
+                  {onBackToCategories && (
+                    <button
+                      onClick={onBackToCategories}
+                      className="group inline-flex items-center justify-center gap-2 px-6 py-3 text-base font-bold rounded-2xl cursor-pointer bg-white/8 backdrop-blur-md border border-white/20 text-slate-200 hover:bg-white/15 hover:border-cyan-400/40 hover:text-white hover:shadow-[0_8px_30px_rgba(6,182,212,0.2)] hover:scale-[1.03] active:scale-95 transition-all duration-200"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                      </svg>
+                      <span>Choose Another Mode</span>
+                    </button>
+                  )}
+
+                  <button
+                    onClick={handleShare}
+                    className="group inline-flex items-center justify-center gap-2 px-6 py-3 text-base font-bold rounded-2xl cursor-pointer bg-white/8 backdrop-blur-md border border-white/20 text-slate-200 hover:bg-white/15 hover:border-white/35 hover:text-white hover:shadow-[0_8px_30px_rgba(255,255,255,0.12)] hover:scale-[1.03] active:scale-95 transition-all duration-200"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                    </svg>
+                    <span>{shareLabel}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )
         ) : (
           /* ════════════ ACTIVE COMPARISON SCREEN ════════════ */
           <div className="w-full flex flex-col items-center">

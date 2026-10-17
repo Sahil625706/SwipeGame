@@ -58,6 +58,7 @@ import img394 from "../assets/image copy 394.png"
 import img395 from "../assets/image copy 395.png"
 import img396 from "../assets/image copy 396.png"
 import img397 from "../assets/image copy 397.png"
+import img462 from "../assets/image copy 462.png"
 
 export const actressAllQuestions = [
   { id: 43, name: "anne de paulas", image: img369 },
@@ -71,6 +72,7 @@ export const actressAllQuestions = [
   { id: 8, name: "Margot Robbie", image: img294 },
   { id: 9, name: "Dua Lipa", image: img295 },
   { id: 10, name: "Riya Sen", image: img296 },
+  { id: 61, name: "Yasmin Ghauri", image: img462 },
   { id: 11, name: "Jennifer Lawrence", image: img297 },
   { id: 57, name: "Gisele Bündchen", image: img394 },
   { id: 12, name: "Alexandra Daddario", image: img298 },
