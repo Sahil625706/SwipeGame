@@ -3,6 +3,18 @@ import { questions } from '../data/questions'
 import YouTubeEmbed from './YouTubeEmbed'
 import clickSoundUrl from '../assets/click.wav'
 import endSoundUrl from '../assets/end.mp3'
+import confetti from 'canvas-confetti'
+
+let starShape = null
+try {
+  if (typeof window !== 'undefined' && typeof confetti.shapeFromPath === 'function') {
+    starShape = confetti.shapeFromPath({
+      path: 'M 0 -10 L 3 -3 L 10 -3 L 5 2 L 7 9 L 0 5 L -7 9 L -5 2 L -10 -3 L -3 -3 Z',
+    })
+  }
+} catch {
+  starShape = null
+}
 
 // ── Audio effects — instantiated once and reused ──
 const clickAudio = typeof Audio !== 'undefined' ? new Audio(clickSoundUrl) : null
@@ -132,12 +144,32 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
   const startTimeRef = useRef(Date.now())
   const pickTimesRef = useRef([])
   const confettiFiredRef = useRef(false)
+  const endAudioPlayedRef = useRef(false)
+  const canvasRef = useRef(null)
 
   // ── Common End screen state ──
   const [elapsedSecs, setElapsedSecs] = useState(0)
   const [fastestIdx, setFastestIdx] = useState(null)
   const [shareLabel, setShareLabel] = useState('Share Results')
   const [shareLinkLabel, setShareLinkLabel] = useState('Share')
+
+  // ── Reduced motion and entrance animations ──
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
+  const [showFlash, setShowFlash] = useState(false)
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return
+    const mql = window.matchMedia('(prefers-reduced-motion: reduce)')
+    setPrefersReducedMotion(mql.matches)
+    const handler = (e) => setPrefersReducedMotion(e.matches)
+    if (mql.addEventListener) {
+      mql.addEventListener('change', handler)
+      return () => mql.removeEventListener('change', handler)
+    } else if (mql.addListener) {
+      mql.addListener(handler)
+      return () => mql.removeListener(handler)
+    }
+  }, [])
 
   // =========================================================================
   // ── SURVIVOR BRACKET STATE ──
@@ -149,6 +181,7 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
   const [nextPoolIndex, setNextPoolIndex] = useState(2)
   const [survivorHistory, setSurvivorHistory] = useState([]) // stack of { leftItem, rightItem, nextPoolIndex }
   const [champion, setChampion] = useState(null)
+  const [finalOpponent, setFinalOpponent] = useState(null)
   const [selectedSide, setSelectedSide] = useState(null) // 'optionA' (left) | 'optionB' (right)
   const [isSurvivorCompleted, setIsSurvivorCompleted] = useState(false)
 
@@ -181,6 +214,7 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
       setNextPoolIndex(2)
       setSurvivorHistory([])
       setChampion(null)
+      setFinalOpponent(null)
       setSelectedSide(null)
       setIsSurvivorCompleted(false)
     } else {
@@ -190,9 +224,11 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
     }
 
     setIsTransitioning(false)
+    setShowFlash(false)
     startTimeRef.current = Date.now()
     pickTimesRef.current = []
     confettiFiredRef.current = false
+    endAudioPlayedRef.current = false
     setShareLabel('Share Results')
     setFastestIdx(null)
     setElapsedSecs(0)
@@ -208,8 +244,6 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
   useEffect(() => {
     if (isCompleted && !confettiFiredRef.current) {
       confettiFiredRef.current = true
-      launchConfetti(100)
-      playEndSound(isMutedRef.current)
       const secs = Math.round((Date.now() - startTimeRef.current) / 1000)
       setElapsedSecs(secs)
       const picks = pickTimesRef.current
@@ -221,8 +255,148 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
         }
         setFastestIdx(minIdx)
       }
+      if (!isSurvivor) {
+        launchConfetti(100)
+        playEndSound(isMutedRef.current)
+      }
     }
-  }, [isCompleted])
+  }, [isCompleted, isSurvivor])
+
+  // =========================================================================
+  // ── SURVIVOR CHAMPION CELEBRATION EFFECT ──
+  // =========================================================================
+  useEffect(() => {
+    if (!isSurvivor || !champion) return
+
+    const reduced =
+      typeof window !== 'undefined' &&
+      window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    if (reduced) {
+      if (!endAudioPlayedRef.current) {
+        endAudioPlayedRef.current = true
+        playEndSound(isMutedRef.current)
+      }
+      return
+    }
+
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
+    const scale = isMobile ? 0.45 : 1.0
+
+    let confettiInstance = null
+    if (canvasRef.current) {
+      confettiInstance = confetti.create(canvasRef.current, {
+        resize: true,
+        useWorker: true,
+      })
+    }
+
+    const timers = []
+
+    // 1. Quick white flash right before hero image landing (~2.65s)
+    const tFlashOn = setTimeout(() => {
+      setShowFlash(true)
+    }, 2650)
+    timers.push(tFlashOn)
+
+    const tFlashOff = setTimeout(() => {
+      setShowFlash(false)
+    }, 3050)
+    timers.push(tFlashOff)
+
+    // 2. Exactly when the hero image lands (~2.8s): Big confetti cannons + end.mp3
+    const tCelebrate = setTimeout(() => {
+      if (!endAudioPlayedRef.current) {
+        endAudioPlayedRef.current = true
+        playEndSound(isMutedRef.current)
+      }
+
+      if (!confettiInstance) return
+
+      const shapes = starShape ? ['square', 'circle', starShape] : ['square', 'circle']
+      const colors = ['#fbbf24', '#ffffff', '#06b6d4', '#ec4899', '#a855f7']
+
+      // Cannon 1: Bottom-left corner shooting upward
+      confettiInstance({
+        particleCount: Math.round(75 * scale),
+        angle: 60,
+        spread: 55,
+        origin: { x: 0.05, y: 0.95 },
+        colors,
+        shapes,
+        startVelocity: isMobile ? 45 : 62,
+        scalar: isMobile ? 0.9 : 1.15,
+        ticks: 320,
+      })
+
+      // Cannon 2: Bottom-right corner shooting upward
+      confettiInstance({
+        particleCount: Math.round(75 * scale),
+        angle: 120,
+        spread: 55,
+        origin: { x: 0.95, y: 0.95 },
+        colors,
+        shapes,
+        startVelocity: isMobile ? 45 : 62,
+        scalar: isMobile ? 0.9 : 1.15,
+        ticks: 320,
+      })
+
+      // Wave 2: Center burst shortly after (260ms)
+      const tCenter = setTimeout(() => {
+        confettiInstance({
+          particleCount: Math.round(110 * scale),
+          angle: 90,
+          spread: 110,
+          origin: { x: 0.5, y: 0.75 },
+          colors,
+          shapes,
+          startVelocity: isMobile ? 40 : 56,
+          scalar: isMobile ? 1.0 : 1.25,
+          ticks: 360,
+        })
+      }, 260)
+      timers.push(tCenter)
+
+      // Wave 3: Gentle golden rain & floating sparkles for ~6 seconds, then stop
+      const rainDuration = 6000
+      const rainEnd = Date.now() + rainDuration
+
+      const rainInterval = setInterval(() => {
+        const timeLeft = rainEnd - Date.now()
+        if (timeLeft <= 0) {
+          clearInterval(rainInterval)
+          return
+        }
+        confettiInstance({
+          particleCount: Math.round(3 * scale),
+          angle: 270,
+          spread: 140,
+          startVelocity: 14,
+          origin: { x: Math.random(), y: -0.05 },
+          colors: ['#fde68a', '#fbbf24', '#f59e0b', '#ffffff'],
+          shapes,
+          gravity: 0.75,
+          scalar: 0.85,
+          ticks: 240,
+          drift: (Math.random() - 0.5) * 0.45,
+        })
+      }, 200)
+      timers.push(rainInterval)
+    }, 2800)
+    timers.push(tCelebrate)
+
+    return () => {
+      timers.forEach((t) => {
+        clearTimeout(t)
+        clearInterval(t)
+      })
+      if (confettiInstance) {
+        confettiInstance.reset()
+      }
+    }
+  }, [isSurvivor, champion])
 
   // =========================================================================
   // ── SURVIVOR SELECTION HANDLER ──
@@ -253,6 +427,7 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
         } else {
           // Pool exhausted, Left is the Champion!
           setChampion(leftItem)
+          setFinalOpponent(rightItem)
           setIsSurvivorCompleted(true)
         }
       } else {
@@ -264,6 +439,7 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
         } else {
           // Pool exhausted, Right is the Champion!
           setChampion(rightItem)
+          setFinalOpponent(leftItem)
           setIsSurvivorCompleted(true)
         }
       }
@@ -316,6 +492,9 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
         setRightItem(last.rightItem)
         setNextPoolIndex(last.nextPoolIndex)
         setChampion(null)
+        setFinalOpponent(null)
+        setShowFlash(false)
+        endAudioPlayedRef.current = false
         setIsSurvivorCompleted(false)
         confettiFiredRef.current = false
         return nextStack
@@ -340,6 +519,7 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
       setNextPoolIndex(2)
       setSurvivorHistory([])
       setChampion(null)
+      setFinalOpponent(null)
       setSelectedSide(null)
       setIsSurvivorCompleted(false)
     } else {
@@ -348,6 +528,8 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
       setSelectedOption(null)
     }
     setIsTransitioning(false)
+    setShowFlash(false)
+    endAudioPlayedRef.current = false
     startTimeRef.current = Date.now()
     pickTimesRef.current = []
     confettiFiredRef.current = false
@@ -389,8 +571,35 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
     ? Math.min(100, Math.round((currentBattle / totalBattles) * 100))
     : Math.min(100, Math.round((currentBattle / Math.max(1, shuffledQuestions.length)) * 100))
 
+  const isChampionScreen = isCompleted && isSurvivor && Boolean(champion)
+
   return (
-    <div className="relative min-h-screen text-slate-100 flex flex-col items-center justify-center px-4 py-8 sm:py-12 overflow-x-hidden selection:bg-pink-500 selection:text-white">
+    <div
+      className={`relative ${
+        isChampionScreen
+          ? 'min-h-screen py-4 sm:py-6 px-3 sm:px-4'
+          : 'min-h-screen py-8 sm:py-12 px-4'
+      } text-slate-100 flex flex-col items-center overflow-x-hidden selection:bg-pink-500 selection:text-white ${
+        prefersReducedMotion ? 'champion-reduced-motion' : ''
+      }`}
+    >
+      {/* ── Fullscreen Confetti Canvas (Pointer-events none) ── */}
+      {isChampionScreen && (
+        <canvas
+          ref={canvasRef}
+          className="fixed inset-0 pointer-events-none z-50 w-full h-full"
+          style={{ width: '100vw', height: '100vh' }}
+        />
+      )}
+
+      {/* ── Background Dim Overlay during Celebration Entrance ── */}
+      {isChampionScreen && (
+        <div
+          className="fixed inset-0 bg-black/40 pointer-events-none z-0 transition-opacity duration-1000"
+          style={{ animation: prefersReducedMotion ? 'none' : 'bg-dim-in 1s ease-out both' }}
+        />
+      )}
+
       {/* ── Fixed Mute / Unmute Button (Active only during in-progress questions) ── */}
       {!isCompleted && (
         <button
@@ -443,21 +652,29 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
         }}
       />
 
-      <div className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center">
+      <div className="relative z-10 w-full max-w-5xl mx-auto flex flex-col items-center">
         {/* Header / Title */}
-        <header className="text-center mb-6 sm:mb-8 flex flex-col items-center">
+        <header className={`text-center ${isChampionScreen ? 'mb-2 sm:mb-3 pt-1' : 'mb-6 sm:mb-8'} flex flex-col items-center justify-center gap-2 sm:gap-2.5 shrink-0 z-10`}>
           {/* Mode Badge - Centered as the primary focus option */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900/90 backdrop-blur-md border border-white/15 shadow-[0_4px_20px_rgba(0,0,0,0.5)] mb-3">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-slate-900/90 backdrop-blur-md border border-white/15 shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
             <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_rgba(34,211,238,0.8)]"></span>
-            <span className="text-xs font-bold tracking-widest uppercase text-cyan-200">
+            <span className="text-[11px] sm:text-xs font-bold tracking-widest uppercase text-cyan-200">
               {category?.title ? `Mode: ${category.title}` : 'Interactive Choice Game'}
             </span>
           </div>
 
-          <h1 className="font-baloo font-['Baloo_2',sans-serif] text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-none bg-gradient-to-r from-cyan-400 via-teal-300 to-pink-500 bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(6,182,212,0.3)]">
-            SwipeGame
-          </h1>
-          {!(isCompleted && isSurvivor) && (
+          {isChampionScreen ? (
+            /* On this screen only, shrink the "SwipeGame" title to a small wordmark with clean spacing */
+            <h1 className="font-baloo font-['Baloo_2',sans-serif] text-sm sm:text-base font-extrabold tracking-wider leading-none bg-gradient-to-r from-cyan-400 via-teal-300 to-pink-500 bg-clip-text text-transparent drop-shadow-[0_2px_10px_rgba(6,182,212,0.3)]">
+              SwipeGame
+            </h1>
+          ) : (
+            <h1 className="font-baloo font-['Baloo_2',sans-serif] text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-none bg-gradient-to-r from-cyan-400 via-teal-300 to-pink-500 bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(6,182,212,0.3)]">
+              SwipeGame
+            </h1>
+          )}
+
+          {!isChampionScreen && (
             <p className="mt-2 text-sm sm:text-base text-slate-300/90 font-medium tracking-wide max-w-md">
               {isSurvivor
                 ? 'Survivor Bracket: Winner stays, loser gets replaced!'
@@ -469,132 +686,241 @@ export default function ComparisonScreen({ category, onBackToCategories }) {
         {isCompleted ? (
           /* ════════════ GAME COMPLETED / CHAMPION STATE ════════════ */
           isSurvivor && champion ? (
-            /* ─── SURVIVOR CHAMPION DISPLAY ─── */
-            <div
-              className="w-full max-w-xl text-center"
-              style={{ animation: 'modal-pop 0.5s cubic-bezier(0.34,1.56,0.64,1) both' }}
-            >
+            /* ─── SURVIVOR CHAMPION CELEBRATION DISPLAY ─── */
+            <div className="w-full max-w-xl sm:max-w-2xl mx-auto flex flex-col items-center relative z-10 px-2 sm:px-0 pb-6">
               {/* Radial spotlight glow behind card */}
-              <div className="absolute inset-0 pointer-events-none z-0 flex items-center justify-center">
-                <div style={{
-                  width: '520px',
-                  height: '520px',
-                  background: 'radial-gradient(ellipse at center, rgba(251,191,36,0.18) 0%, rgba(236,72,153,0.10) 45%, transparent 70%)',
-                  borderRadius: '50%',
-                  filter: 'blur(30px)',
-                }} />
+              <div className="absolute inset-0 pointer-events-none z-0 flex items-center justify-center overflow-visible">
+                <div
+                  style={{
+                    width: '640px',
+                    height: '640px',
+                    background: 'radial-gradient(ellipse at center, rgba(251,191,36,0.32) 0%, rgba(168,85,247,0.22) 40%, rgba(236,72,153,0.18) 65%, transparent 75%)',
+                    borderRadius: '50%',
+                    filter: 'blur(50px)',
+                  }}
+                />
               </div>
 
-              {/* Rich glass card */}
-              <div className="relative z-10 bg-gradient-to-br from-[#1a1c3d]/95 via-[#1e1040]/95 to-[#251025]/95 backdrop-blur-2xl border border-amber-400/35 rounded-3xl px-6 py-6 sm:px-8 sm:py-8 shadow-[0_24px_70px_rgba(0,0,0,0.7),0_0_60px_rgba(251,191,36,0.18)] ring-1 ring-amber-400/10">
-
-                {/* Crown */}
+              {/* Rich glass card — vibrant animated royal blue to violet to magenta with gold spotlight and shimmering texture */}
+              <div
+                className="relative z-10 w-full overflow-hidden backdrop-blur-2xl border border-amber-400/60 rounded-[2rem] sm:rounded-[2.5rem] p-4 sm:p-6 md:p-7 shadow-[0_24px_70px_rgba(0,0,0,0.85),0_0_55px_rgba(251,191,36,0.38),0_0_90px_rgba(168,85,247,0.35),0_0_130px_rgba(236,72,153,0.22)] ring-1 ring-amber-300/40 text-center flex flex-col items-center gap-2 sm:gap-2.5"
+                style={{
+                  background: 'linear-gradient(135deg, #131c5f 0%, #201a6e 20%, #431677 40%, #6b1980 60%, #88156d 80%, #9f125a 100%)',
+                  backgroundSize: '220% 220%',
+                  animation: prefersReducedMotion
+                    ? 'none'
+                    : 'modal-pop 0.5s cubic-bezier(0.34,1.56,0.64,1) both, card-gradient-shift 10s ease-in-out infinite',
+                }}
+              >
+                {/* Bright warm gold-white radial spotlight behind crown and champion image */}
                 <div
-                  className="text-6xl sm:text-7xl mb-2 select-none"
-                  style={{ animation: 'crown-drop 0.6s cubic-bezier(0.34,1.56,0.64,1) both, crown-float 3s ease-in-out 0.7s infinite' }}
+                  className="absolute inset-0 pointer-events-none z-0 overflow-hidden rounded-[2rem] sm:rounded-[2.5rem]"
+                  style={{
+                    background: 'radial-gradient(circle at 50% 46%, rgba(255,254,240,0.3) 0%, rgba(254,240,138,0.2) 24%, rgba(251,191,36,0.14) 42%, rgba(217,70,239,0.08) 60%, transparent 74%)',
+                  }}
+                />
+
+                {/* Subtle shimmering texture overlay — fine sparkle dots */}
+                <div
+                  className="absolute inset-0 pointer-events-none z-0 rounded-[2rem] sm:rounded-[2.5rem]"
+                  style={{
+                    backgroundImage: `
+                      radial-gradient(circle at 12px 12px, rgba(255, 255, 255, 0.45) 1px, transparent 1.2px),
+                      radial-gradient(circle at 26px 26px, rgba(254, 240, 138, 0.35) 1.2px, transparent 1.5px)
+                    `,
+                    backgroundSize: '32px 32px',
+                    animation: prefersReducedMotion ? 'none' : 'texture-shimmer 4s ease-in-out infinite',
+                  }}
+                />
+
+                {/* 1. Crown SVG */}
+                <div
+                  className="relative z-10 inline-block select-none shrink-0"
+                  style={{
+                    animation: prefersReducedMotion
+                      ? 'none'
+                      : 'crown-drop 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both, crown-float 3s ease-in-out 0.95s infinite',
+                  }}
                 >
-                  👑
+                  <svg
+                    viewBox="0 0 100 70"
+                    className="w-14 h-10 sm:w-16 sm:h-12 md:w-20 md:h-15 mx-auto drop-shadow-[0_4px_16px_rgba(251,191,36,0.7)]"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <defs>
+                      <linearGradient id="crownGold" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#fffbeb" />
+                        <stop offset="25%" stopColor="#fde68a" />
+                        <stop offset="50%" stopColor="#fbbf24" />
+                        <stop offset="85%" stopColor="#d97706" />
+                        <stop offset="100%" stopColor="#b45309" />
+                      </linearGradient>
+                      <linearGradient id="crownShine" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="transparent" />
+                        <stop offset="50%" stopColor="rgba(255,255,255,0.7)" />
+                        <stop offset="100%" stopColor="transparent" />
+                      </linearGradient>
+                    </defs>
+                    <rect x="12" y="56" width="76" height="8" rx="2.5" fill="#92400e" stroke="#fbbf24" strokeWidth="1.5" />
+                    <circle cx="26" cy="60" r="2.2" fill="#38bdf8" />
+                    <circle cx="50" cy="60" r="2.6" fill="#ec4899" />
+                    <circle cx="74" cy="60" r="2.2" fill="#38bdf8" />
+                    <path
+                      d="M12 56 L88 56 L82 24 L64 38 L50 12 L36 38 L18 24 Z"
+                      fill="url(#crownGold)"
+                      stroke="#fef08a"
+                      strokeWidth="1.8"
+                      strokeLinejoin="round"
+                    />
+                    <circle cx="18" cy="23" r="2.8" fill="#fef08a" stroke="#d97706" strokeWidth="1" />
+                    <circle cx="36" cy="37" r="2.3" fill="#fef08a" stroke="#d97706" strokeWidth="1" />
+                    <circle cx="50" cy="11" r="3.6" fill="#ffffff" stroke="#fbbf24" strokeWidth="1.5" />
+                    <circle cx="64" cy="37" r="2.3" fill="#fef08a" stroke="#d97706" strokeWidth="1" />
+                    <circle cx="82" cy="23" r="2.8" fill="#fef08a" stroke="#d97706" strokeWidth="1" />
+                  </svg>
+                  <div
+                    className="absolute inset-0 pointer-events-none overflow-hidden rounded-full"
+                    style={{
+                      animation: prefersReducedMotion ? 'none' : 'gold-crown-sweep 2.8s ease-in-out 1s infinite',
+                      background: 'linear-gradient(90deg, transparent 20%, rgba(255,255,255,0.4) 50%, transparent 80%)',
+                    }}
+                  />
                 </div>
 
-                {/* ULTIMATE CHAMPION badge */}
+                {/* 2. ULTIMATE CHAMPION badge */}
                 <div
-                  className="relative inline-block overflow-hidden px-5 py-1.5 rounded-full border border-amber-400/50 mb-3"
-                  style={{ background: 'linear-gradient(90deg, rgba(251,191,36,0.25), rgba(245,158,11,0.30), rgba(251,191,36,0.25))' }}
+                  className="relative z-10 inline-block overflow-hidden px-4 sm:px-5 py-1 sm:py-1.5 rounded-full border border-amber-400/50 shrink-0"
+                  style={{
+                    background: 'linear-gradient(90deg, rgba(251,191,36,0.25), rgba(245,158,11,0.32), rgba(251,191,36,0.25))',
+                    animation: prefersReducedMotion ? 'none' : 'badge-fade-in 0.5s ease-out 0.8s both',
+                  }}
                 >
-                  {/* Shimmer sweep */}
-                  <div className="absolute inset-0 pointer-events-none" style={{ animation: 'shimmer-sweep 2.4s linear 0.8s infinite', background: 'linear-gradient(100deg, transparent 30%, rgba(255,255,255,0.25) 50%, transparent 70%)', backgroundSize: '200% 100%' }} />
-                  <span className="relative text-[11px] sm:text-xs font-black tracking-widest uppercase" style={{ background: 'linear-gradient(90deg,#fde68a,#fbbf24,#f59e0b,#fde68a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                  <div
+                    className="absolute inset-0 pointer-events-none"
+                    style={{
+                      animation: prefersReducedMotion ? 'none' : 'shimmer-sweep 2.4s linear 1s infinite',
+                      background: 'linear-gradient(100deg, transparent 30%, rgba(255,255,255,0.25) 50%, transparent 70%)',
+                      backgroundSize: '200% 100%',
+                    }}
+                  />
+                  <span
+                    className="relative text-xs sm:text-sm font-black tracking-widest uppercase"
+                    style={{
+                      background: 'linear-gradient(90deg, #fde68a, #fbbf24, #f59e0b, #fde68a)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                    }}
+                  >
                     Ultimate Champion
                   </span>
                 </div>
 
-                {/* Champion name */}
-                <h2
-                  className="font-baloo font-['Baloo_2',sans-serif] text-3xl sm:text-4xl font-extrabold tracking-tight leading-tight mb-4"
-                  style={{ background: 'linear-gradient(135deg,#fde68a 0%,#fbbf24 40%,#ffffff 70%,#fde68a 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
-                >
-                  {champion.name}
+                {/* 3. Champion name */}
+                <h2 className="relative z-10 font-baloo font-['Baloo_2',sans-serif] text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight leading-tight shrink-0">
+                  {champion.name.split('').map((char, idx) => (
+                    <span
+                      key={idx}
+                      className="inline-block animate-[letter-reveal_0.4s_cubic-bezier(0.2,0.8,0.2,1)_both]"
+                      style={{
+                        animationDelay: prefersReducedMotion ? '0s' : `${1.3 + idx * 0.04}s`,
+                        background: 'linear-gradient(135deg, #fffbeb 0%, #fde68a 35%, #fbbf24 60%, #ffffff 85%, #fde68a 100%)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                      }}
+                    >
+                      {char === ' ' ? '\u00A0' : char}
+                    </span>
+                  ))}
                 </h2>
 
-                {/* Champion image — no letterbox, blurred bg fill */}
+                {/* 4. Real Contenders info */}
                 <div
-                  className="relative w-full max-w-xs mx-auto rounded-2xl overflow-hidden mb-4"
+                  className="relative z-10 flex items-center justify-center text-sm sm:text-base font-semibold shrink-0 mb-1"
                   style={{
-                    border: '2px solid rgba(251,191,36,0.55)',
-                    boxShadow: '0 0 0 4px rgba(251,191,36,0.12), 0 0 50px rgba(251,191,36,0.35)',
-                    animation: 'modal-pop 0.6s cubic-bezier(0.34,1.56,0.64,1) 0.15s both',
+                    animation: prefersReducedMotion ? 'none' : 'fade-slide-up 0.4s ease 2.0s both',
                   }}
                 >
-                  {/* Blurred background fill */}
-                  <img
-                    src={champion.image}
-                    alt=""
-                    aria-hidden="true"
-                    className="absolute inset-0 w-full h-full object-cover scale-110"
-                    style={{ filter: 'blur(14px) brightness(0.55)', transform: 'scale(1.15)' }}
-                  />
-                  {/* Foreground image — natural aspect ratio */}
-                  <img
-                    src={champion.image}
-                    alt={champion.name}
-                    className="relative w-full h-auto object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.7)]"
-                  />
+                  <p className="text-amber-200/95 leading-snug">
+                    Crowned champion out of{' '}
+                    <span className="text-amber-300 font-extrabold text-base sm:text-lg">
+                      {survivorPool.length} contenders
+                    </span>
+                  </p>
                 </div>
 
-                {/* Stat line */}
-                <p className="text-slate-300/85 text-sm sm:text-base mb-5 font-medium">
-                  Crowned champion out of{' '}
-                  <span className="text-amber-300 font-bold">{survivorPool.length} contenders</span>
-                </p>
-
-                {/* Stats row */}
-                <div className="grid grid-cols-2 gap-3 mb-5">
-                  <div className="bg-white/5 border border-amber-400/15 rounded-2xl p-3 backdrop-blur-md">
-                    <p className="text-[10px] font-semibold tracking-widest uppercase text-amber-300/70 mb-0.5">Total time</p>
-                    <p className="text-xl font-extrabold text-white">{formatTime(elapsedSecs)}</p>
-                  </div>
-                  <div className="bg-white/5 border border-amber-400/15 rounded-2xl p-3 backdrop-blur-md">
-                    <p className="text-[10px] font-semibold tracking-widest uppercase text-amber-300/70 mb-0.5">Face-offs</p>
-                    <p className="text-xl font-extrabold text-white">{totalBattles}</p>
-                  </div>
-                </div>
-
-                {/* Action buttons */}
-                <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                  {/* Play Again — primary */}
-                  <button
-                    onClick={handleRestart}
-                    className="group inline-flex items-center justify-center gap-2 px-6 py-3 text-base font-bold text-white rounded-2xl cursor-pointer bg-indigo-600 border border-indigo-400/30 shadow-[0_4px_16px_rgba(99,102,241,0.35)] hover:bg-indigo-500 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(99,102,241,0.45)] active:scale-95 active:translate-y-0 transition-all duration-200"
+                {/* 5. Champion Image — frame hugs the photo exactly, no blurred background copy, no side bars */}
+                <div
+                  className="relative z-10 mt-3 mb-6"
+                  style={{
+                    animation: prefersReducedMotion ? 'none' : 'hero-scale-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) 2.2s both',
+                  }}
+                >
+                  <div
+                    className="relative rounded-2xl sm:rounded-3xl border-2 sm:border-[3px] border-amber-400 shadow-[0_0_24px_rgba(251,191,36,0.45),0_10px_30px_rgba(0,0,0,0.8)] overflow-hidden inline-block"
+                    style={{
+                      animation: 'breathing-glow 3.2s ease-in-out infinite',
+                      width: 'auto',
+                      height: 'auto',
+                    }}
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 transition-transform duration-300 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <img
+                      src={champion.image}
+                      alt={champion.name}
+                      className="block rounded-[14px] sm:rounded-[21px] object-contain"
+                      style={{
+                        width: 'auto',
+                        height: 'auto',
+                        display: 'block',
+                        maxWidth: 'min(480px, 85vw)',
+                        maxHeight: 'min(34vh, 260px)',
+                      }}
+                    />
+                    {showFlash && (
+                      <div
+                        className="absolute inset-0 bg-white z-30 pointer-events-none rounded-[14px] sm:rounded-[21px]"
+                        style={{ animation: 'white-flash 0.35s ease-out forwards' }}
+                      />
+                    )}
+                  </div>
+                </div>
+
+                {/* 6. Action Buttons — clear spacing below image, no negative margins or absolute positioning */}
+                <div
+                  className="relative z-10 flex flex-row gap-3 sm:gap-4 justify-center w-full max-w-sm sm:max-w-md mx-auto"
+                  style={{
+                    animation: prefersReducedMotion ? 'none' : 'fade-slide-up 0.4s ease 2.8s both',
+                  }}
+                >
+                  <button
+                    type="button"
+                    onClick={handleRestart}
+                    className="flex-1 group inline-flex items-center justify-center gap-2.5 px-6 py-3 sm:py-3.5 text-base sm:text-lg font-extrabold text-white rounded-2xl cursor-pointer bg-indigo-600 border border-indigo-400/35 shadow-[0_6px_20px_rgba(99,102,241,0.4)] hover:bg-indigo-500 hover:-translate-y-0.5 hover:shadow-[0_10px_28px_rgba(99,102,241,0.5)] active:scale-95 active:translate-y-0 transition-all duration-200"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-300 group-hover:rotate-180"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                     </svg>
                     <span>Play Again</span>
                   </button>
 
-                  {/* Choose Another Mode */}
                   {onBackToCategories && (
                     <button
+                      type="button"
                       onClick={onBackToCategories}
-                      className="group inline-flex items-center justify-center gap-2 px-6 py-3 text-base font-bold rounded-2xl cursor-pointer bg-white/8 backdrop-blur-md border border-white/20 text-slate-200 hover:bg-white/15 hover:border-amber-400/40 hover:text-white hover:shadow-[0_8px_30px_rgba(251,191,36,0.2)] hover:scale-[1.03] active:scale-95 transition-all duration-200"
+                      className="flex-1 group inline-flex items-center justify-center gap-2.5 px-6 py-3 sm:py-3.5 text-base sm:text-lg font-extrabold rounded-2xl cursor-pointer bg-white/8 backdrop-blur-md border border-white/20 text-slate-200 hover:bg-white/15 hover:border-amber-400/40 hover:text-white hover:shadow-[0_10px_28px_rgba(251,191,36,0.25)] hover:-translate-y-0.5 active:scale-95 active:translate-y-0 transition-all duration-200"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-amber-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 sm:w-6 sm:h-6 text-amber-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                       </svg>
                       <span>Home</span>
                     </button>
                   )}
-
-                  {/* Share link */}
-                  <button
-                    onClick={handleShareLink}
-                    className="group inline-flex items-center justify-center gap-2 px-6 py-3 text-base font-bold rounded-2xl cursor-pointer bg-white/8 backdrop-blur-md border border-white/20 text-slate-200 hover:bg-white/15 hover:border-white/35 hover:text-white hover:shadow-[0_8px_30px_rgba(255,255,255,0.12)] hover:scale-[1.03] active:scale-95 transition-all duration-200"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-                    </svg>
-                    <span>{shareLinkLabel}</span>
-                  </button>
                 </div>
               </div>
             </div>
