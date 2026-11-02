@@ -965,7 +965,7 @@ function ActressSubMenu({ onBack, onSelect }) {
     </div>
   )
 }
-export default function CategorySelectScreen({ onSelectCategory }) {
+export default function CategorySelectScreen({ onSelectCategory, onNavigate }) {
   const [showActressSubMenu, setShowActressSubMenu] = useState(false)
 
   function handleCategoryClick(cat) {
@@ -1038,8 +1038,44 @@ export default function CategorySelectScreen({ onSelectCategory }) {
               <CategoryCard key={cat.id} cat={cat} onClick={handleCategoryClick} />
             ))}
           </div>
+
+          {/* Small subtle footer row */}
+          <footer className="mt-8 sm:mt-10 flex items-center justify-center gap-2.5 sm:gap-3 text-xs text-slate-400 font-medium">
+            <button
+              type="button"
+              onClick={() => onNavigate && onNavigate('/about')}
+              className="hover:text-cyan-300 transition-colors cursor-pointer"
+            >
+              About
+            </button>
+            <span className="text-slate-600 select-none">·</span>
+            <button
+              type="button"
+              onClick={() => onNavigate && onNavigate('/contact')}
+              className="hover:text-cyan-300 transition-colors cursor-pointer"
+            >
+              Contact
+            </button>
+            <span className="text-slate-600 select-none">·</span>
+            <button
+              type="button"
+              onClick={() => onNavigate && onNavigate('/privacy')}
+              className="hover:text-cyan-300 transition-colors cursor-pointer"
+            >
+              Privacy
+            </button>
+            <span className="text-slate-600 select-none">·</span>
+            <button
+              type="button"
+              onClick={() => onNavigate && onNavigate('/terms')}
+              className="hover:text-cyan-300 transition-colors cursor-pointer"
+            >
+              Terms
+            </button>
+          </footer>
         </div>
       </div>
     </div>
   )
 }
+

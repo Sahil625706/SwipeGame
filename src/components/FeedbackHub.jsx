@@ -1,78 +1,52 @@
 import { useState, useEffect, useRef } from 'react'
+import FeedbackForm from './FeedbackForm'
 
-export default function FeedbackHub() {
-  const [isOpen, setIsOpen] = useState(false)
-  const [message, setMessage] = useState('')
-  const [status, setStatus] = useState('idle') // 'idle' | 'submitting' | 'success' | 'error'
-  const [errorText, setErrorText] = useState('')
-  const textareaRef = useRef(null)
+export default function FeedbackHub({ onNavigate }) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const menuRef = useRef(null)
+  const buttonRef = useRef(null)
 
-  // Focus textarea when modal opens
-  useEffect(() => {
-    if (isOpen) {
-      setStatus('idle')
-      setErrorText('')
-      // Small timeout to allow modal mount animation
-      const timer = setTimeout(() => {
-        textareaRef.current?.focus()
-      }, 100)
-      return () => clearTimeout(timer)
-    }
-  }, [isOpen])
-
-  // Handle ESC key to close modal
+  // Handle ESC key to close menu and modal
   useEffect(() => {
     function handleKeyDown(e) {
-      if (e.key === 'Escape' && isOpen && status !== 'submitting') {
-        setIsOpen(false)
+      if (e.key === 'Escape') {
+        if (isModalOpen) {
+          setIsModalOpen(false)
+        } else if (isMenuOpen) {
+          setIsMenuOpen(false)
+        }
       }
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [isOpen, status])
+  }, [isModalOpen, isMenuOpen])
 
-  async function handleSubmit(e) {
-    e.preventDefault()
-    const trimmed = message.trim()
-
-    if (!trimmed) {
-      setErrorText('Please enter your feedback before submitting.')
-      return
-    }
-
-    setErrorText('')
-    setStatus('submitting')
-
-    try {
-      const response = await fetch('https://formspree.io/f/mwlpnzye', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-        body: JSON.stringify({ message: trimmed }),
-      })
-
-      if (response.ok) {
-        setStatus('success')
-        // Automatically close modal after 2 seconds
-        setTimeout(() => {
-          setIsOpen(false)
-          setMessage('')
-          setStatus('idle')
-        }, 2000)
-      } else {
-        const data = await response.json().catch(() => ({}))
-        setErrorText(
-          data?.errors?.[0]?.message ||
-          data?.error ||
-          'Failed to send feedback. Please try again.'
-        )
-        setStatus('error')
+  // Handle click outside dropdown to close
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (
+        isMenuOpen &&
+        menuRef.current &&
+        !menuRef.current.contains(e.target) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(e.target)
+      ) {
+        setIsMenuOpen(false)
       }
-    } catch {
-      setErrorText('Network error. Please check your connection and try again.')
-      setStatus('error')
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener('touchstart', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('touchstart', handleClickOutside)
+    }
+  }, [isMenuOpen])
+
+  function handleNavigate(path) {
+    setIsMenuOpen(false)
+    if (onNavigate) {
+      onNavigate(path)
     }
   }
 
@@ -80,9 +54,11 @@ export default function FeedbackHub() {
     <>
       {/* ── Persistent "☰" Menu Button ── */}
       <button
+        ref={buttonRef}
         type="button"
-        onClick={() => setIsOpen(true)}
-        aria-label="Feedback Hub Menu"
+        onClick={() => setIsMenuOpen((prev) => !prev)}
+        aria-label="Site Navigation Menu"
+        aria-expanded={isMenuOpen}
         className="fixed top-4 right-4 sm:top-5 sm:right-6 z-40 w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-slate-900/85 hover:bg-slate-800 text-slate-200 hover:text-white border border-white/20 hover:border-cyan-400/80 backdrop-blur-xl shadow-[0_4px_16px_rgba(0,0,0,0.5)] hover:shadow-[0_0_20px_rgba(6,182,212,0.4)] hover:scale-105 active:scale-95 flex items-center justify-center transition-all duration-200 cursor-pointer group"
       >
         <svg
@@ -97,137 +73,128 @@ export default function FeedbackHub() {
         </svg>
       </button>
 
-      {/* ── Modal Popup ── */}
-      {isOpen && (
+      {/* ── Small Glass Dropdown Menu ── */}
+      {isMenuOpen && (
+        <div
+          ref={menuRef}
+          role="menu"
+          className="fixed top-14 right-4 sm:top-16 sm:right-6 z-50 w-52 bg-[#0c1022]/90 backdrop-blur-2xl border border-white/20 rounded-2xl p-1.5 shadow-[0_16px_40px_rgba(0,0,0,0.7),0_0_24px_rgba(6,182,212,0.18)] animate-[modal-pop_0.15s_cubic-bezier(0.16,1,0.3,1)_both]"
+        >
+          <div className="flex flex-col gap-0.5">
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => {
+                setIsMenuOpen(false)
+                setIsModalOpen(true)
+              }}
+              className="w-full text-left px-3 py-2 text-xs sm:text-sm font-semibold text-slate-200 hover:text-cyan-300 hover:bg-white/10 rounded-xl transition-all flex items-center gap-2.5 cursor-pointer"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-cyan-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+              </svg>
+              <span>Send Feedback</span>
+            </button>
+
+            <div className="h-px bg-white/10 my-1 mx-1.5" />
+
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => handleNavigate('/about')}
+              className="w-full text-left px-3 py-2 text-xs sm:text-sm font-medium text-slate-300 hover:text-white hover:bg-white/10 rounded-xl transition-all flex items-center gap-2.5 cursor-pointer"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>About</span>
+            </button>
+
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => handleNavigate('/contact')}
+              className="w-full text-left px-3 py-2 text-xs sm:text-sm font-medium text-slate-300 hover:text-white hover:bg-white/10 rounded-xl transition-all flex items-center gap-2.5 cursor-pointer"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              <span>Contact</span>
+            </button>
+
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => handleNavigate('/privacy')}
+              className="w-full text-left px-3 py-2 text-xs sm:text-sm font-medium text-slate-300 hover:text-white hover:bg-white/10 rounded-xl transition-all flex items-center gap-2.5 cursor-pointer"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+              <span>Privacy Policy</span>
+            </button>
+
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => handleNavigate('/terms')}
+              className="w-full text-left px-3 py-2 text-xs sm:text-sm font-medium text-slate-300 hover:text-white hover:bg-white/10 rounded-xl transition-all flex items-center gap-2.5 cursor-pointer"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <span>Terms</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ── Feedback Modal Popup ── */}
+      {isModalOpen && (
         <div
           role="dialog"
           aria-modal="true"
           aria-labelledby="feedback-hub-title"
           className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-slate-900/50 backdrop-blur-sm transition-all duration-300"
           onClick={(e) => {
-            // Close if clicking outside the card
-            if (e.target === e.currentTarget && status !== 'submitting') {
-              setIsOpen(false)
+            if (e.target === e.currentTarget) {
+              setIsModalOpen(false)
             }
           }}
         >
-          <div
-            className="relative w-full max-w-lg bg-gradient-to-br from-[#1a1f4e]/92 via-[#1e1545]/92 to-[#2a1040]/92 backdrop-blur-2xl border border-white/20 rounded-3xl p-6 sm:p-8 shadow-[0_20px_60px_rgba(0,0,0,0.55),0_0_50px_rgba(6,182,212,0.18),0_0_80px_rgba(236,72,153,0.12)] ring-1 ring-cyan-400/15 text-slate-100 transition-all duration-300 animate-[modal-pop_0.3s_cubic-bezier(0.34,1.56,0.64,1)_both]"
-          >
+          <div className="relative w-full max-w-lg bg-gradient-to-br from-[#1a1f4e]/92 via-[#1e1545]/92 to-[#2a1040]/92 backdrop-blur-2xl border border-white/20 rounded-3xl p-6 sm:p-8 shadow-[0_20px_60px_rgba(0,0,0,0.55),0_0_50px_rgba(6,182,212,0.18),0_0_80px_rgba(236,72,153,0.12)] ring-1 ring-cyan-400/15 text-slate-100 transition-all duration-300 animate-[modal-pop_0.3s_cubic-bezier(0.34,1.56,0.64,1)_both]">
             {/* Close Button (X) */}
             <button
               type="button"
-              onClick={() => setIsOpen(false)}
-              disabled={status === 'submitting'}
+              onClick={() => setIsModalOpen(false)}
               aria-label="Close modal"
-              className="absolute top-5 right-5 w-9 h-9 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 text-slate-400 hover:text-white flex items-center justify-center transition-all duration-200 active:scale-95 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+              className="absolute top-5 right-5 w-9 h-9 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 text-slate-400 hover:text-white flex items-center justify-center transition-all duration-200 active:scale-95 cursor-pointer"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
 
-            {status === 'success' ? (
-              /* ── Success Confirmation ── */
-              <div className="py-8 flex flex-col items-center text-center">
-                <div className="w-16 h-16 rounded-full bg-emerald-500/20 border border-emerald-400/50 flex items-center justify-center text-emerald-400 mb-4 shadow-[0_0_25px_rgba(16,185,129,0.35)] animate-[icon-pop_0.4s_ease-out]">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-                <h3 className="font-baloo font-['Baloo_2',sans-serif] text-2xl sm:text-3xl font-extrabold text-white mb-2">
-                  Thanks for your feedback!
-                </h3>
-                <p className="text-slate-300/80 text-sm max-w-xs">
-                  Your thoughts help us make SwipeGame better. Closing shortly...
-                </p>
+            {/* Header */}
+            <div className="mb-5 pr-8">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-cyan-500/25 to-pink-500/20 border border-cyan-400/50 mb-2.5 shadow-[0_0_14px_rgba(34,211,238,0.3)]">
+                <span className="w-2 h-2 rounded-full bg-cyan-300 animate-pulse shadow-[0_0_8px_rgba(34,211,238,0.9)]"></span>
+                <span className="text-[10px] font-bold tracking-widest uppercase text-cyan-200">
+                  Community Hub
+                </span>
               </div>
-            ) : (
-              /* ── Form View ── */
-              <form onSubmit={handleSubmit} className="flex flex-col">
-                {/* Header */}
-                <div className="mb-5 pr-8">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-cyan-500/25 to-pink-500/20 border border-cyan-400/50 mb-2.5 shadow-[0_0_14px_rgba(34,211,238,0.3)]">
-                    <span className="w-2 h-2 rounded-full bg-cyan-300 animate-pulse shadow-[0_0_8px_rgba(34,211,238,0.9)]"></span>
-                    <span className="text-[10px] font-bold tracking-widest uppercase text-cyan-200">
-                      Community Hub
-                    </span>
-                  </div>
-                  <h2
-                    id="feedback-hub-title"
-                    className="font-baloo font-['Baloo_2',sans-serif] text-2xl sm:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-cyan-400 via-teal-300 to-pink-500 bg-clip-text text-transparent leading-snug"
-                  >
-                    💬 Feedback Hub
-                  </h2>
-                  <p className="mt-1 text-xs sm:text-sm text-slate-300/80 leading-relaxed">
-                    "We actually read every feedback you send"
-                  </p>
-                </div>
+              <h2
+                id="feedback-hub-title"
+                className="font-baloo font-['Baloo_2',sans-serif] text-2xl sm:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-cyan-400 via-teal-300 to-pink-500 bg-clip-text text-transparent leading-snug"
+              >
+                💬 Feedback Hub
+              </h2>
+              <p className="mt-1 text-xs sm:text-sm text-slate-300/80 leading-relaxed">
+                "We actually read every feedback you send"
+              </p>
+            </div>
 
-                {/* Text Area */}
-                <div className="mb-4">
-                  <label htmlFor="feedback-message" className="sr-only">
-                    Your Feedback
-                  </label>
-                  <textarea
-                    id="feedback-message"
-                    ref={textareaRef}
-                    rows={5}
-                    value={message}
-                    disabled={status === 'submitting'}
-                    onChange={(e) => {
-                      setMessage(e.target.value)
-                      if (errorText) setErrorText('')
-                    }}
-                    placeholder={"Share with us:\n- What we can improve\n- What you liked or disliked\n- Any bugs or issues you found"}
-                    className="w-full p-4 rounded-2xl bg-white/8 border border-white/20 text-slate-100 placeholder:text-slate-300/65 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/40 focus:bg-white/12 outline-none resize-none transition-all text-sm sm:text-base leading-relaxed disabled:opacity-50"
-                  />
-                  {errorText && (
-                    <p className="mt-2 text-xs font-semibold text-rose-400 flex items-center gap-1.5">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                      </svg>
-                      {errorText}
-                    </p>
-                  )}
-                </div>
-
-                {/* Footer Actions */}
-                <div className="flex items-center justify-end gap-3 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setIsOpen(false)}
-                    disabled={status === 'submitting'}
-                    className="px-4 py-2.5 rounded-xl border border-white/20 hover:border-cyan-400/40 bg-white/8 hover:bg-white/15 text-slate-200 hover:text-white text-sm font-semibold backdrop-blur-sm transition-all cursor-pointer disabled:opacity-40 shadow-[0_2px_8px_rgba(0,0,0,0.25)]"
-                  >
-                    Cancel
-                  </button>
-
-                  <button
-                    type="submit"
-                    disabled={status === 'submitting'}
-                    className="inline-flex items-center justify-center gap-2 px-6 py-2.5 text-sm sm:text-base font-bold text-white rounded-xl cursor-pointer bg-gradient-to-r from-cyan-500 via-teal-500 to-pink-500 border border-white/20 shadow-[0_4px_18px_rgba(6,182,212,0.4)] hover:shadow-[0_6px_25px_rgba(236,72,153,0.55)] hover:scale-[1.02] active:scale-95 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
-                  >
-                    {status === 'submitting' ? (
-                      <>
-                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        <span>Submitting...</span>
-                      </>
-                    ) : (
-                      <>
-                        <span>Submit</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                        </svg>
-                      </>
-                    )}
-                  </button>
-                </div>
-              </form>
-            )}
+            <FeedbackForm onCancel={() => setIsModalOpen(false)} />
           </div>
         </div>
       )}
