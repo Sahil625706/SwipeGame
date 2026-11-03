@@ -8,8 +8,6 @@ import imgBase from '../assets/image.png'
 import imgCopy from '../assets/image copy.png'
 import img6 from '../assets/image copy 6.png'
 import img7 from '../assets/image copy 7.png'
-import img2 from '../assets/image copy 2.png'
-import img3 from '../assets/image copy 3.png'
 import img106 from '../assets/image copy 106.png'
 import img107 from '../assets/image copy 107.png'
 import img83 from '../assets/image copy 83.png'
@@ -32,28 +30,18 @@ import img22 from '../assets/image copy 22.png'
 import img23 from '../assets/image copy 23.png'
 import img25 from '../assets/image copy 25.png'
 import img24 from '../assets/image copy 24.png'
-import img84 from '../assets/image copy 84.png'
-import img85 from '../assets/image copy 85.png'
 import img75 from '../assets/image copy 75.png'
 import img74 from '../assets/image copy 74.png'
-import img55 from '../assets/image copy 55.png'
-import img54 from '../assets/image copy 54.png'
-import img65 from '../assets/image copy 65.png'
-import img66 from '../assets/image copy 66.png'
 import img26 from '../assets/image copy 26.png'
 import img27 from '../assets/image copy 27.png'
 import img29 from '../assets/image copy 29.png'
 import img28 from '../assets/image copy 28.png'
 import img30 from '../assets/image copy 30.png'
 import img31 from '../assets/image copy 31.png'
-import img79 from '../assets/image copy 79.png'
-import img78 from '../assets/image copy 78.png'
 import img76 from '../assets/image copy 76.png'
 import img77 from '../assets/image copy 77.png'
 import img32 from '../assets/image copy 32.png'
 import img33 from '../assets/image copy 33.png'
-import img64 from '../assets/image copy 64.png'
-import img69 from '../assets/image copy 69.png'
 import img34 from '../assets/image copy 34.png'
 import img35 from '../assets/image copy 35.png'
 import img36 from '../assets/image copy 36.png'
@@ -70,8 +58,6 @@ import img44 from '../assets/image copy 44.png'
 import img45 from '../assets/image copy 45.png'
 import img67 from '../assets/image copy 67.png'
 import img68 from '../assets/image copy 68.png'
-import img71 from '../assets/image copy 71.png'
-import img70 from '../assets/image copy 70.png'
 import img48 from '../assets/image copy 48.png'
 import img49 from '../assets/image copy 49.png'
 import img50 from '../assets/image copy 50.png'
@@ -104,8 +90,6 @@ import img110 from '../assets/image copy 110.png'
 import img111 from '../assets/image copy 111.png'
 import img114 from '../assets/image copy 114.png'
 import img115 from '../assets/image copy 115.png'
-import img124 from '../assets/image copy 124.png'
-import img125 from '../assets/image copy 125.png'
 import img112 from '../assets/image copy 112.png'
 import img113 from '../assets/image copy 113.png'
 import img128 from '../assets/image copy 128.png'
@@ -126,8 +110,6 @@ import img148 from '../assets/image copy 148.png'
 import img149 from '../assets/image copy 149.png'
 import img150 from '../assets/image copy 150.png'
 import img151 from '../assets/image copy 151.png'
-import img154 from '../assets/image copy 154.png'
-import img155 from '../assets/image copy 155.png'
 import img156 from '../assets/image copy 156.png'
 import img157 from '../assets/image copy 157.png'
 import img158 from '../assets/image copy 158.png'
@@ -137,8 +119,6 @@ import img166 from '../assets/image copy 166.png'
 import img165 from '../assets/image copy 165.png'
 import img160 from '../assets/image copy 160.png'
 import img161 from '../assets/image copy 161.png'
-import img162 from '../assets/image copy 162.png'
-import img163 from '../assets/image copy 163.png'
 import img164 from '../assets/image copy 164.png'
 import img168 from '../assets/image copy 168.png'
 import img169 from '../assets/image copy 169.png'
@@ -150,8 +130,6 @@ import img174 from '../assets/image copy 174.png'
 import img175 from '../assets/image copy 175.png'
 import img176 from '../assets/image copy 176.png'
 import img177 from '../assets/image copy 177.png'
-import img180 from '../assets/image copy 180.png'
-import img181 from '../assets/image copy 181.png'
 import img182 from '../assets/image copy 182.png'
 import img183 from '../assets/image copy 183.png'
 import img186 from '../assets/image copy 186.png'
@@ -206,7 +184,6 @@ export const questions = [
   { id: 3, optionA: "Be a Musician", optionAImage: img4, optionB: "Be a Singer", optionBImage: img5 },
   { id: 4, optionA: "Sky Diving", optionAImage: imgBase, optionB: "Roller Coaster", optionBImage: imgCopy },
   { id: 5, optionA: "Invisibility", optionAImage: img6, optionB: "Teleportation", optionBImage: img7 },
-  { id: 6, optionA: "Dodge", optionAImage: img2, optionB: "Porsche", optionBImage: img3 },
   { id: 7, optionA: "Pull a lever to save 10 people but kill 1", optionAImage: img106, optionB: "Do nothing and let 10 people die", optionBImage: img107 },
   { id: 9, optionA: "Lamborghini V12 Vision Gran Turismo", optionAImage: img83, optionB: "Mercedes-Benz Concept Car", optionBImage: img82 },
   { id: 11, optionA: "Water/Aqua park", optionAImage: img12, optionB: "Theme park", optionBImage: img13 },
@@ -218,17 +195,12 @@ export const questions = [
   { id: 17, optionA: "Megan Fox is Unforgettable?", optionAImage: img56, optionB: "Adriana Lima is Unforgettable?", optionBImage: img57 },
   { id: 18, optionA: "Be the happiest person alive with a simple life", optionAImage: img22, optionB: "Be the richest person but constantly stressed", optionBImage: img23 },
   { id: 19, optionA: "Always know when someone is lying to you", optionAImage: img25, optionB: "Be able to lie perfectly without ever being caught", optionBImage: img24 },
-  { id: 20, optionA: "Timothee Chalamet is your favourite", optionAImage: img84, optionB: "Andrew Garfield is your favourite", optionBImage: img85 },
-  { id: 21, optionA: "Iron Man Suit", optionAImage: img75, optionB: "Ability like Superman", optionBImage: img74 },
-  { id: 22, optionA: "Scarlett Johansson steals the Spotlight?", optionAImage: img55, optionB: "Jennifer Lawrence steals the Spotlight?", optionBImage: img54 },
-  { id: 23, optionA: "Bugatti", optionAImage: img65, optionB: "Rolls Royce", optionBImage: img66 },
+  { id: 21, optionA: "Have an Iron Man Suit", optionAImage: img75, optionB: "Have an Ability like Superman", optionBImage: img74 },
   { id: 24, optionA: "Have Free Food for life", optionAImage: img26, optionB: "Have Free Travel for life", optionBImage: img27 },
-  { id: 25, optionA: "Give up brushing your teeth for 3 weeks", optionAImage: img29, optionB: "Give up showering for a week", optionBImage: img28 },
+  { id: 25, optionA: "Give up brushing your teeth for a month", optionAImage: img29, optionB: "Give up showering for a week", optionBImage: img28 },
   { id: 26, optionA: "Have Oily Hair all day", optionAImage: img30, optionB: "Have Bad Breath all day", optionBImage: img31 },
-  { id: 27, optionA: "Chris Hemsworth is your Celebrity Crush?", optionAImage: img79, optionB: "Chris Evans is your Celebrity Crush?", optionBImage: img78 },
   { id: 28, optionA: "Attend a Funniest Stand-up Comedy show", optionAImage: img76, optionB: "Attend an Energetic Concert", optionBImage: img77 },
   { id: 29, optionA: "Laugh in slow motion", optionAImage: img32, optionB: "Cry in fast forward", optionBImage: img33 },
-  { id: 30, optionA: "Ferrari looks more Stylish", optionAImage: img64, optionB: "Audi looks more Stylish", optionBImage: img69 },
   { id: 31, optionA: "Take a hot shower in sweaty conditions", optionAImage: img34, optionB: "Take a cold shower in winter", optionBImage: img35 },
   { id: 32, optionA: "Use Netflix for the rest of your life", optionAImage: img36, optionB: "Use YouTube for the rest of your life", optionBImage: img37 },
   { id: 33, optionA: "Freeze time", optionAImage: img38, optionB: "Fast-forward time", optionBImage: img39 },
@@ -237,7 +209,6 @@ export const questions = [
   { id: 36, optionA: "Morning workout", optionAImage: img42, optionB: "Evening workout", optionBImage: img43 },
   { id: 37, optionA: "Be the Smartest person in the room", optionAImage: img44, optionB: "Be the Funniest person in the room", optionBImage: img45 },
   { id: 38, optionA: "Mercedes has more Aura", optionAImage: img67, optionB: "BMW has more Aura", optionBImage: img68 },
-  { id: 40, optionA: "Sunny Leone is more Prettier?", optionAImage: img71, optionB: "Kate Upton is more Prettier?", optionBImage: img70 },
   { id: 41, optionA: "Breakfast hits different", optionAImage: img48, optionB: "Dinner hits different", optionBImage: img49 },
   { id: 42, optionA: "Fight 6 Zombies", optionAImage: img50, optionB: "Fight 1 Vampire", optionBImage: img51 },
   { id: 43, optionA: "Sydney Sweeney is your Type?", optionAImage: img52, optionB: "Madison Beer is your Type?", optionBImage: img53 },
@@ -254,7 +225,6 @@ export const questions = [
   { id: 54, optionA: "Remember every song lyric perfectly", optionAImage: img108, optionB: "Perform every dance move flawlessly", optionBImage: img109 },
   { id: 55, optionA: "Fight a Polar Bear on land", optionAImage: img110, optionB: "Fight a Great White Shark in the ocean", optionBImage: img111 },
   { id: 56, optionA: "Have 1 pet Lion", optionAImage: img114, optionB: "Have 3 pet Wolves", optionBImage: img115 },
-  { id: 57, optionA: "Disha Patani is more Good Looking", optionAImage: img124, optionB: "Tamannaah Bhatia is more Good Looking", optionBImage: img125 },
   { id: 58, optionA: "Have a peaceful nature view", optionAImage: img112, optionB: "Have a modern city skyline view", optionBImage: img113 },
   { id: 59, optionA: "Have a pet Sea Serpent", optionAImage: img463, optionB: "Have a pet Dragon", optionBImage: img464 },
   { id: 60, optionA: "Have the Omnitrix like Ben 10", optionAImage: img128, optionB: "Have your own Pokemon Team", optionBImage: img129 },
@@ -266,11 +236,9 @@ export const questions = [
   { id: 67, optionA: "Travel to every other country on Earth", optionAImage: img142, optionB: "Experience Space once", optionBImage: img143 },
   { id: 69, optionA: "Work 14 hours a day for your own Business", optionAImage: img148, optionB: "Work 3 hours a day for someone Else with decent pay", optionBImage: img149 },
   { id: 70, optionA: "Earn $900/month doing something you Enjoy", optionAImage: img150, optionB: "Earn $1,900/month doing something you Don't Enjoy", optionBImage: img151 },
-  { id: 71, optionA: "Angelina Jolie catches your eye more?", optionAImage: img154, optionB: "Kate Winslet catches your eye more?", optionBImage: img155 },
   { id: 72, optionA: "Tobey Maguire as Spider-Man", optionAImage: img156, optionB: "Tom Holland as Spider-Man", optionBImage: img157 },
   { id: 73, optionA: "Score a long-range Football goal", optionAImage: img158, optionB: "Shoot a long-distance Basketball shot", optionBImage: img159 },
   { id: 74, optionA: "Rock is your Favourite", optionAImage: img160, optionB: "Brock Lesner is your Favourite", optionBImage: img161 },
-  { id: 75, optionA: "Michael B. Jordan", optionAImage: img162, optionB: "Will Smith", optionBImage: img163, category: "actor" },
   { id: 76, optionA: "Stephen Curry", optionAImage: img164, optionB: "Lebron James", optionBImage: img165 },
   { id: 77, optionA: "Ronaldo is G.O.A.T", optionAImage: img167, optionB: "Messi is G.O.A.T", optionBImage: img166 },
   { id: 78, optionA: "Randy Orton has better style", optionAImage: img168, optionB: "John Cena has better style", optionBImage: img169 },
@@ -278,7 +246,6 @@ export const questions = [
   { id: 84, optionA: "Primarina(Pokemon) looks more elegant", optionAImage: img172, optionB: "Ninetales(Pokemon) looks more elegant", optionBImage: img173 },
   { id: 85, optionA: "Blake Lively looks more ethereal in this outfit?", optionAImage: img174, optionB: "Emma Chamberlain looks more ethereal in this outfit?", optionBImage: img175 },
   { id: 86, optionA: "Anok Yai looks more Classy?", optionAImage: img176, optionB: "Tyla looks more Classy?", optionBImage: img177 },
-  { id: 88, optionA: "Tripti Dimri is more Cutie?", optionAImage: img180, optionB: "Shraddha Kapoor is more Cutie? ", optionBImage: img181, category: "actress" },
   { id: 89, optionA: "Never get help from any AI again", optionAImage: img182, optionB: "Never ask for help from another human again", optionBImage: img183 },
   { id: 90, optionA: "Enjoy playing games on Phone/Tablet?", optionAImage: img186, optionB: "Enjoy playing games on PC?", optionBImage: img187 },
   { id: 91, optionA: "Would you survive Real Combat with 3 lives?", optionAImage: img188, optionB: "Would you survive a Zombie outbreak with 3 lives?", optionBImage: img189 },

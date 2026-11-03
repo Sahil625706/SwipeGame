@@ -4,7 +4,7 @@ export default function PrivacyPage({ onHome }) {
   return (
     <PageLayout title="Privacy Policy" badge="Legal" onHome={onHome}>
       <p className="text-xs text-slate-400 font-medium -mt-2 mb-2">
-        Last updated: October 26, 2026
+        Last updated: November 3, 2026
       </p>
 
       <section className="space-y-3">
@@ -17,19 +17,10 @@ export default function PrivacyPage({ onHome }) {
       <section className="space-y-3">
         <h2 className="font-baloo text-xl font-bold text-white">Votes and anonymous data</h2>
         <p>
-          When you pick an option, the game records an anonymous vote count for that matchup, so it can show the percentage of players who chose each side and how many have voted.
-        </p>
-        <p>
-          Votes are stored as totals only. They are not linked to your name, email or any account.
-        </p>
-        <p>
-          To prevent repeated voting on the same question, a random ID is saved in your browser's local storage. It contains no personal information and is not shared with advertisers.
+          When you pick an option, the game adds one to an anonymous vote counter for that matchup, so it can show the percentage of players who chose each side and the total number of votes. We do not store your name, email or account details with your votes, and we do not identify who cast them.
         </p>
         <p>
           Vote counts are stored with a third-party database provider, Supabase.
-        </p>
-        <p>
-          You can clear your browser's local storage at any time, which removes this ID.
         </p>
       </section>
 

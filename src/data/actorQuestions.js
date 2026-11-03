@@ -49,10 +49,10 @@ import img285 from "../assets/image copy 285.png"
 import img286 from "../assets/image copy 286.png"
 
 export const actorQuestions = [
-  { id: 1, name: "Nick Jonas", image: img210 },
   { id: 2, name: "Jake Gyllenhaal", image: img217 },
   { id: 3, name: "Gong Yoo", image: img240 },
   { id: 4, name: "Keanu Reeves", image: img241 },
+  { id: 1, name: "Nick Jonas", image: img210 },
   { id: 5, name: "Tom Holland", image: img242 },
   { id: 6, name: "Ranbir Kapoor", image: img243 },
   { id: 7, name: "Vicky Kaushal", image: img244 },
